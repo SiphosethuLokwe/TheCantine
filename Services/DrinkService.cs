@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using TheCantine.Data;
 using TheCantine.Interfaces;
 using TheCantine.Models;
 

@@ -3,7 +3,7 @@ using TheCantine.Models;
 
 namespace TheCantine.Commands.Dishes
 {
-    public class CreateDishCommand : IRequest<Dish>
+    public class CreateDishCommand : IRequest<CommandResponse<Dish>>
     {
 
         public string? Name { get; set; }

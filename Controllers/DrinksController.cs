@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using TheCantine.Commands.Drinks;
-using TheCantine.Commands.Drinks.Commands;
 using TheCantine.Models;
 using TheCantine.Queries.Drinks;
 

@@ -1,8 +1,9 @@
 ﻿using MediatR;
+using TheCantine.Models;
 
 namespace TheCantine.Commands.Dishes
 {
-    public class UpdateDishCommand:IRequest
+    public class UpdateDishCommand:IRequest<CommandResponse<bool>>
     {
         public int? Id { get; set; }
         public string? Name { get; set; }

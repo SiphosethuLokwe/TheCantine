@@ -24,28 +24,34 @@ builder.Host.UseSerilog();
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddDbContext<CantinaContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.Authority = builder.Configuration["Jwt:Authority"];
-        options.Audience = builder.Configuration["Jwt:Audience"];
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-        };
-    });
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IDrinkService, DrinkService>();
+builder.Services.AddSwaggerGen();
+
+// Add Authentication
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.Authority = "https://your-auth-server";
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateAudience = false
+        };
+    });
+
+// Add Authorization
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("FrontEnd", policy => policy.RequireRole("FrontEnd"));
+    options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+});
+
+
 builder.Services.AddMediatR(typeof(Program).Assembly);
 builder.Services.AddLogging(loggingBuilder =>
-    loggingBuilder.AddSerilog(dispose: true));
+loggingBuilder.AddSerilog(dispose: true));
 
 var app = builder.Build();
 
@@ -53,6 +59,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    });
 }
 
 app.UseHttpsRedirection();
