@@ -74,29 +74,31 @@ namespace TheCantine.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult<CommandResponse<Dish>>> PostDish(CreateDishCommand command)
         {
+            //possibly move my validation away from here my controller is getting a bit too much 
+            if (string.IsNullOrEmpty(command.Name))
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Title = "BadRequest",
+                    Status = StatusCodes.Status400BadRequest,
+                    Detail = "Name of dish must be provided"
+                });
+            }
+            if (command.Price <= 0)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Title = "BadRequest",
+                    Status = StatusCodes.Status400BadRequest,
+                    Detail = "Price must be greater than 0"
+                });
+            }
             try
-            {  //possibly move my validation away from here my controller is getting a bit too much 
-                if (string.IsNullOrEmpty(command.Name))
-                {
-                    return BadRequest(new ProblemDetails
-                    {
-                        Title = "BadRequest",
-                        Status = StatusCodes.Status400BadRequest,
-                        Detail = "Name of dish must be provided"
-                    });
-                }
-                if (command.Price <= 0)
-                {
-                    return BadRequest(new ProblemDetails
-                    {
-                        Title = "BadRequest",
-                        Status = StatusCodes.Status400BadRequest,
-                        Detail = "Price must be greater than 0"
-                    });
-                }
-
+            {  
+           
                 var dish = await _mediator.Send(command);
                 return Ok(dish);
             }
@@ -109,7 +111,7 @@ namespace TheCantine.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "FrontEnd")]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult<CommandResponse<bool>>> PutDish(int id, UpdateDishCommand command)
         {
             if (command.Id <= 0)

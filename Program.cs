@@ -1,11 +1,10 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using TheCantine.Data;
 using TheCantine.Services;
 using MediatR;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using TheCantine.Interfaces;
+using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -28,30 +27,84 @@ builder.Services.AddDbContext<CantinaContext>(options =>
 
 builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IDrinkService, DrinkService>();
-builder.Services.AddSwaggerGen();
 
 // Add Authentication
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        options.Authority = "https://your-auth-server";
+        options.Authority = builder.Configuration["Jwt:Authority"];
         options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
         {
-            ValidateAudience = false
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Authority"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])), // Secret key used to sign the token
+            RoleClaimType = "Roles" 
         };
     });
 
 // Add Authorization
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("FrontEnd", policy => policy.RequireRole("FrontEnd"));
-    options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("FrontEnd", policy => policy.RequireClaim("Roles", "FrontEnd"));
+    options.AddPolicy("Admin", policy => policy.RequireClaim("Roles", "Admin"));
 });
 
+// Add Swagger
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Cantina", Version = "v1" });
+
+    // Add security definition for Bearer token
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    // Add security requirement
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 builder.Services.AddMediatR(typeof(Program).Assembly);
 builder.Services.AddLogging(loggingBuilder =>
-loggingBuilder.AddSerilog(dispose: true));
+    loggingBuilder.AddSerilog(dispose: true));
+
+// Rate limiting
+builder.Services.AddMemoryCache();
+builder.Services.Configure<IpRateLimitOptions>(options =>
+{
+    options.GeneralRules = new List<RateLimitRule>
+    {
+        new RateLimitRule
+        {
+            Endpoint = "*",
+            Period = "1m",
+            Limit = 5
+        }
+    };
+});
+builder.Services.AddInMemoryRateLimiting();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
 var app = builder.Build();
 
@@ -62,12 +115,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cantina V1");
     });
 }
 
 app.UseHttpsRedirection();
-
+app.UseMiddleware<BearerTokenMiddleware>(); 
 app.UseAuthentication();
 app.UseAuthorization();
 
