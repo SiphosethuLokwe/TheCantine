@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TheCantine.Commands.Drinks;
 using TheCantine.Models;
@@ -18,6 +19,8 @@ namespace TheCantine.Controllers
         }
 
         [HttpGet]
+        [HttpGet]
+        [Authorize(Policy = "FrontEnd")]
         public async Task<ActionResult<IEnumerable<Drink>>> GetDrinks()
         {
             var query = new GetDrinksQuery();
@@ -26,6 +29,7 @@ namespace TheCantine.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "FrontEnd")]
         public async Task<ActionResult<Drink>> GetDrink(int id)
         {
             var query = new GetDrinkByIdQuery { Id = id };
@@ -38,6 +42,7 @@ namespace TheCantine.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult<Drink>> PostDrink(CreateDrinkCommand command)
         {
             var drink = await _mediator.Send(command);
@@ -45,6 +50,7 @@ namespace TheCantine.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> PutDrink(int id, UpdateDrinkCommand command)
         {
             if (id != command.Id)
@@ -57,6 +63,7 @@ namespace TheCantine.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteDrink(int id)
         {
             var command = new DeleteDrinkCommand { Id = id };

@@ -9,5 +9,6 @@ namespace TheCantine.Data
 
         public DbSet<Dish> Dishes { get; set; }
         public DbSet<Drink> Drinks { get; set; }
+        public DbSet<Review> Reviews { get; set; }
     }
 }

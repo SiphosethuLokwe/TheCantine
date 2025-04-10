@@ -27,7 +27,15 @@ builder.Services.AddDbContext<CantinaContext>(options =>
 
 builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IDrinkService, DrinkService>();
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 // Add Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -118,6 +126,7 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cantina V1");
     });
 }
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 app.UseMiddleware<BearerTokenMiddleware>(); 
