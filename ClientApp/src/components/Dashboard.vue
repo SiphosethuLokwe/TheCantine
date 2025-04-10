@@ -8,18 +8,34 @@
         <li><router-link to="/dashboard/dishes" class="sidebar-link">Dishes</router-link></li>
         <li><router-link to="/dashboard/drinks" class="sidebar-link">Drinks</router-link></li>
       </ul>
+      <button class="logout-button" @click="handleLogout">Logout</button>
     </div>
 
     <div class="content">
-      <!-- This will be replaced by the Dishes or Drinks component based on routing -->
       <router-view></router-view>
     </div>
   </div>
 </template>
 
 <script>
+import { useAuthStore } from '../stores/authStore'; 
+import { useRouter } from 'vue-router';
+
 export default {
   name: 'Dashboard',
+  setup() {
+    const authStore = useAuthStore();
+    const router = useRouter();
+
+    const handleLogout = () => {
+      authStore.logout();
+      router.push('/login');
+    };
+
+    return {
+      handleLogout,
+    };
+  },
 };
 </script>
 
@@ -84,6 +100,22 @@ html, body {
 
 .sidebar-link:hover {
   background-color: #2d60ab;
+}
+
+.logout-button {
+  margin-top: auto;
+  padding: 10px 20px;
+  background-color: #ff3b30;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.logout-button:hover {
+  background-color: #cc2c24;
 }
 
 .content {

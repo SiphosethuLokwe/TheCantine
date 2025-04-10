@@ -1,68 +1,64 @@
 // src/router/index.js
-import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Home.vue'
-import Register from '../views/Register.vue'
-import Login from '../views/Login.vue'
-import Dashboard from '../components/Dashboard.vue'; 
+import { createRouter, createWebHistory } from 'vue-router';
+import Home from '../views/Home.vue';
+import Register from '../views/Register.vue';
+import Login from '../views/Login.vue';
+import Dashboard from '../components/Dashboard.vue';
 import Dishes from '../components/Dishes.vue';
 import Drinks from '../components/Drinks.vue';
-import { useAuthStore  } from '../stores/authStore'
+import { useAuthStore } from '../stores/authStore';
 
 
 const routes = [
-    { 
-       path: '/',
-       name: 'Home', 
-       component: Home
-    },
-    { 
-       path: '/register',
-       name: 'Register', 
-       component: Register,
-
-   },
-
-   { 
-       path: '/login',
-       name:'Login', 
-       component: Login ,
-
-    },
-   {
+  {
+    path: '/',
+    name: 'Home',
+    component: Home
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
-    meta: { requiresAuth: true } ,
-    component: Dashboard, // Dashboard layout
+    component: Dashboard,
+    meta: { requiresAuth: true },
     children: [
       {
         path: 'dishes',
         name: 'Dishes',
-        component: Dishes, 
-
+        component: Dishes
       },
       {
         path: 'drinks',
         name: 'Drinks',
-        component: Drinks, 
+        component: Drinks
       }
     ]
-  },
-]
+  }
+];
 
 const router = createRouter({
   history: createWebHistory(),
   routes
-})
+});
 
 router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore(); 
-  const isLoggedIn = !!authStore.token;
+  const authStore = useAuthStore();
+  const token = authStore.token;
 
-  if (to.meta.requiresAuth && !isLoggedIn) {
+  if (to.meta.requiresAuth && !token) {
     next({ name: 'Login' });
   } else {
     next();
   }
 });
 
-export default router
+export default router;

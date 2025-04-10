@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { useAuthStore } from '../stores/authStore'; 
+
 export default {
   name: 'Login',
   data() {
@@ -43,8 +45,15 @@ export default {
     }
   },
   methods: {
-    handleLogin() {
-      // 🚀 TODO: Add your API call here
+    async handleLogin() {
+     const authStore = useAuthStore();
+      try {
+        await authStore.login(this.form);
+        this.$router.push('/dashboard'); 
+      } catch (error) {
+        console.error(error.message);
+        alert('Login Failed: ' + error.message);
+      }
       console.log('Logging in with:', this.form)
       alert('Login submitted!')
     }

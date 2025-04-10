@@ -12,8 +12,12 @@
         <input v-model="newDish.name" placeholder="Name" />
         <input v-model="newDish.description" placeholder="Description" />
         <input v-model="newDish.price" type="number" placeholder="Price" />
-        <input v-model="newDish.image" placeholder="Image URL" />
-        <button @click="addDish">Submit</button>
+         <input 
+                  type="file" 
+                  @change="onImageChange($event)" 
+                  accept="image/*" 
+                  class="editable-input"
+                />        <button @click="addDish">Submit</button>
       </div>
     </div>
 
@@ -25,45 +29,70 @@
       @input="searchDishes"
     />
 
+    <!-- Dishes Table -->
     <div v-if="filteredDishes && filteredDishes.length > 0">
-      <div v-for="dish in filteredDishes" :key="dish.id" class="menu-item">
-        <img :src="dish.image" alt="Dish Image" class="menu-item-image" />
-        <div class="menu-item-details">
-          <h3>{{ dish.name }}</h3>
-          <p>{{ dish.description }}</p>
-          <p><strong>Price: ${{ dish.price }}</strong></p>
-
-          <!-- Show rating section for Frontend Users -->
-          <div v-if="!isAdmin">
-            <label for="rating">Rate this Dish:</label>
-            <select v-model="dish.rating">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-            <button @click="rateDish(dish)">Submit Rating</button>
-          </div>
-
-          <!-- Show ratings and controls for Admin -->
-          <div v-if="isAdmin">
-            <p><strong>Ratings:</strong></p>
-            <ul>
-              <li v-for="rating in dish.ratings" :key="rating.userId">
-                User {{ rating.userId }} rated: {{ rating.value }} stars
-              </li>
-            </ul>
-
-            <div class="admin-controls">
-              <button @click="editDish(dish)">Edit</button>
-              <button @click="deleteDish(dish.id)">Delete</button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <table class="dishes-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Image</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="dish in filteredDishes" :key="dish.id" @click="editDish(dish)">
+            <td>
+              <input 
+                v-if="editingDish && editingDish.id === dish.id" 
+                :value="editingDish.name"
+                @input="editingDish.name = $event.target.value"
+                class="editable-input"
+              />
+              <span v-else>{{ dish.name }}</span>
+            </td>
+            <td>
+              <input 
+                v-if="editingDish && editingDish.id === dish.id" 
+                :value="editingDish.description"
+                @input="editingDish.description = $event.target.value"
+                class="editable-input"
+              />
+              <span v-else>{{ dish.description }}</span>
+            </td>
+            <td>
+              <input 
+                v-if="editingDish && editingDish.id === dish.id" 
+                :value="editingDish.price"
+                @input="editingDish.price = $event.target.value"
+                class="editable-input"
+              />
+              <span v-else>{{ dish.price }}</span>
+            </td>
+            <td>
+              <div v-if="editingDish && editingDish.id === dish.id">
+                <!-- Image Preview -->
+                <input 
+                  type="file" 
+                  @change="onImageChange($event)" 
+                  accept="image/*" 
+                  class="editable-input"
+                />
+                <img v-if="imagePreview" :src="imagePreview" alt="Image preview" class="image-preview"/>
+              </div>
+              <span v-else><img :src="dish.image" alt="Dish Image" class="menu-item-image" /></span>
+            </td>
+            <td>
+              <button v-if="editingDish && editingDish.id === dish.id" @click.stop="saveDish(dish)">Save</button>
+              <button v-else @click.stop="editDish(dish)">Edit</button>
+              <button @click.stop="deleteDish(dish.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    
+
     <div v-else>
       <p>No dishes available.</p>
     </div>
@@ -92,12 +121,16 @@ export default {
       image: ""
     });
 
+    const editingDish = ref(null); // Track the dish being edited
+    const imagePreview = ref(null); // Preview the selected image
+
     const fetchDishes = async () => {
       try {
         const response = await getMainAPI().get("/Dishes");
         dishes.value = response.data;
         filteredDishes.value = dishes.value;
       } catch (error) {
+        console.log(error);
         console.error("Error fetching dishes:", error);
       }
     };
@@ -118,7 +151,7 @@ export default {
 
     const deleteDish = async (id) => {
       try {
-        await getMainAPI().delete(`/Dishes/${id}`);
+        await getMainAPI().delete(`/Dishes/delete/${id}`);
         dishes.value = dishes.value.filter(dish => dish.id !== id);
         filteredDishes.value = dishes.value;
         alert("Dish deleted successfully.");
@@ -129,30 +162,23 @@ export default {
     };
 
     const editDish = (dish) => {
-      const updatedName = prompt("Edit name", dish.name);
-      const updatedDescription = prompt("Edit description", dish.description);
-      const updatedPrice = prompt("Edit price", dish.price);
-      const updatedImage = prompt("Edit image URL", dish.image);
-
-      if (updatedName && updatedDescription && updatedPrice && updatedImage) {
-        updateDish({
-          ...dish,
-          name: updatedName,
-          description: updatedDescription,
-          price: Number(updatedPrice),
-          image: updatedImage
-        });
-      }
+      editingDish.value = { ...dish }; // Make a copy of the dish to edit
+      imagePreview.value = dish.image; // Set the current image for preview
     };
 
-    const updateDish = async (dish) => {
+    const saveDish = async () => {
       try {
-        await getMainAPI().put(`/Dishes/${dish.id}`, dish);
-        const index = dishes.value.findIndex(d => d.id === dish.id);
+        if (imagePreview.value) {
+          editingDish.value.image = imagePreview.value; // Update the image in the editingDish
+        }
+        await getMainAPI().put(`/Dishes/${editingDish.value.id}`, editingDish.value);
+        const index = dishes.value.findIndex(d => d.id === editingDish.value.id);
         if (index !== -1) {
-          dishes.value[index] = dish;
+          dishes.value[index] = editingDish.value;
           filteredDishes.value = [...dishes.value];
         }
+        editingDish.value = null; // Reset editing state
+        imagePreview.value = null; // Reset image preview
         alert("Dish updated successfully.");
       } catch (error) {
         console.error("Error updating dish:", error);
@@ -160,17 +186,14 @@ export default {
       }
     };
 
-    const rateDish = async (dish) => {
-      try {
-        const ratingData = {
-          userId: authStore.user.id,
-          rating: dish.rating
+    const onImageChange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          imagePreview.value = reader.result; // Preview the image
         };
-        await getMainAPI().post(`/dishes/${dish.id}/rate`, ratingData);
-        alert("Rating submitted successfully!");
-      } catch (error) {
-        console.error("Error submitting rating:", error);
-        alert("Error submitting rating.");
+        reader.readAsDataURL(file);
       }
     };
 
@@ -186,14 +209,14 @@ export default {
     };
 
     onMounted(() => {
-      isAdmin.value = authStore.user && authStore.user.role === "Admin";
+      console.log(authStore.decodedToken);
+      isAdmin.value = authStore.user && authStore.role === "Admin";
       fetchDishes();
     });
 
     return {
       dishes,
       filteredDishes,
-      rateDish,
       isAdmin,
       searchQuery,
       searchDishes,
@@ -202,47 +225,18 @@ export default {
       addDish,
       deleteDish,
       editDish,
-      updateDish
+      saveDish,
+      editingDish,
+      imagePreview,
+      onImageChange
     };
   }
 };
 </script>
-
 <style scoped>
-.menu-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.menu-item-image {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  margin-right: 20px;
-}
-
-.menu-item-details {
-  flex: 1;
-}
-
-button {
-  margin-top: 10px;
-  margin-right: 10px;
-}
-
-.admin-add {
-  margin-bottom: 20px;
-}
-
-.add-form input {
-  display: block;
-  margin-bottom: 10px;
-  padding: 5px;
-  width: 250px;
-}
-
-.admin-controls {
-  margin-top: 10px;
+.menu-item-image, .image-preview {
+  width: 100px;  /* Set a fixed width */
+  height: 100px; /* Set a fixed height */
+  object-fit: cover; /* Ensures the image is resized and cropped proportionally */
 }
 </style>

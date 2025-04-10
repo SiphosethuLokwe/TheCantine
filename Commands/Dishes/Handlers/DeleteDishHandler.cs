@@ -28,9 +28,7 @@ namespace TheCantine.Commands.Dishes.Handlers
                     };
 
                 }
-
-    
-                 _context.Entry(dish).State = EntityState.Modified;
+                _context.Dishes.Remove(dish);
                 var result = await _context.SaveChangesAsync(cancellationToken);
                 if (result <= 0)
                 {

@@ -20,7 +20,7 @@ namespace TheCantine.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "FrontEnd")]
+        [Authorize(Roles = "FrontEnd,Admin")]
         public async Task<ActionResult<IEnumerable<Dish>>> GetDishes()
         {
             try
@@ -38,7 +38,7 @@ namespace TheCantine.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Policy = "FrontEnd")]
+        [Authorize(Roles = "FrontEnd,Admin")]
         public async Task<ActionResult<Dish>> GetDish(int id)
         {
             try
@@ -145,7 +145,7 @@ namespace TheCantine.Controllers
               
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         [Authorize(Policy = "Admin")]
         public async Task<ActionResult<CommandResponse<bool>>> DeleteDish(int id)
         {
