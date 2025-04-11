@@ -21,8 +21,7 @@ namespace TheCantine.Controllers
         }
 
         [HttpGet]
-        [HttpGet]
-        [Authorize(Policy = "FrontEnd")]
+        [Authorize(Roles = "FrontEnd,Admin")]
         public async Task<ActionResult<IEnumerable<Drink>>> GetDrinks()
         {
             var query = new GetDrinksQuery();

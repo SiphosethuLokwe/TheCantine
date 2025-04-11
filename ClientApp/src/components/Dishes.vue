@@ -1,54 +1,66 @@
 <template>
-  <div>
+  <div class="container mt-5">
     <h2>Dishes</h2>
 
     <!-- Admin Add Dish Button -->
-    <div v-if="isAdmin" class="admin-add">
-      <button @click="showAddForm = !showAddForm">
+    <div v-if="isAdmin" class="admin-add mb-3">
+      <button class="btn btn-primary" @click="showAddForm = !showAddForm">
         {{ showAddForm ? 'Cancel' : 'Add New Dish' }}
       </button>
 
-      <div v-if="showAddForm" class="add-form">
-        <input v-model="newDish.name" placeholder="Name" />
-        <input v-model="newDish.description" placeholder="Description" />
-        <input v-model="newDish.price" type="number" placeholder="Price" />
-         <input 
-                  type="file" 
-                  @change="onImageChange($event)" 
-                  accept="image/*" 
-                  class="editable-input"
-                />        <button @click="addDish">Submit</button>
+      <div v-if="showAddForm" class="mt-3">
+        <div class="mb-3">
+          <label for="dishName" class="form-label">Name</label>
+          <input v-model="newDish.name" id="dishName" class="form-control" placeholder="Enter dish name" />
+        </div>
+        <div class="mb-3">
+          <label for="dishDescription" class="form-label">Description</label>
+          <input v-model="newDish.description" id="dishDescription" class="form-control" placeholder="Enter dish description" />
+        </div>
+        <div class="mb-3">
+          <label for="dishPrice" class="form-label">Price</label>
+          <input v-model="newDish.price" id="dishPrice" type="number" class="form-control" placeholder="Enter dish price" />
+        </div>
+        <div class="mb-3">
+          <label for="dishImage" class="form-label">Dish Image</label>
+          <input type="file" @change="onImageChange($event)" accept="image/*" class="form-control" />
+        </div>
+        <button @click="addDish" class="btn btn-success">Submit</button>
       </div>
     </div>
 
     <!-- Search input -->
-    <input 
-      v-model="searchQuery" 
-      type="text" 
-      placeholder="Search dishes..." 
-      @input="searchDishes"
-    />
+    <div class="mb-3">
+      <input 
+        v-model="searchQuery" 
+        type="text" 
+        placeholder="Search dishes..." 
+        @input="searchDishes"
+        class="form-control"
+      />
+    </div>
 
     <!-- Dishes Table -->
     <div v-if="filteredDishes && filteredDishes.length > 0">
-      <table class="dishes-table">
+      <table class="table table-striped">
         <thead>
           <tr>
             <th>Name</th>
             <th>Description</th>
             <th>Price</th>
             <th>Image</th>
-            <th>Actions</th>
+            <th v-if="isAdmin">Actions</th>
+            <th v-if="!isAdmin">Review & Rate</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="dish in filteredDishes" :key="dish.id" @click="editDish(dish)">
+          <tr v-for="dish in filteredDishes" :key="dish.id">
             <td>
               <input 
                 v-if="editingDish && editingDish.id === dish.id" 
                 :value="editingDish.name"
                 @input="editingDish.name = $event.target.value"
-                class="editable-input"
+                class="form-control"
               />
               <span v-else>{{ dish.name }}</span>
             </td>
@@ -57,7 +69,7 @@
                 v-if="editingDish && editingDish.id === dish.id" 
                 :value="editingDish.description"
                 @input="editingDish.description = $event.target.value"
-                class="editable-input"
+                class="form-control"
               />
               <span v-else>{{ dish.description }}</span>
             </td>
@@ -66,27 +78,43 @@
                 v-if="editingDish && editingDish.id === dish.id" 
                 :value="editingDish.price"
                 @input="editingDish.price = $event.target.value"
-                class="editable-input"
+                class="form-control"
               />
               <span v-else>{{ dish.price }}</span>
             </td>
             <td>
               <div v-if="editingDish && editingDish.id === dish.id">
-                <!-- Image Preview -->
                 <input 
                   type="file" 
                   @change="onImageChange($event)" 
                   accept="image/*" 
-                  class="editable-input"
+                  class="form-control"
                 />
-                <img v-if="imagePreview" :src="imagePreview" alt="Image preview" class="image-preview"/>
+                <img v-if="imagePreview" :src="imagePreview" alt="Image preview" class="img-thumbnail mt-2" />
               </div>
-              <span v-else><img :src="dish.image" alt="Dish Image" class="menu-item-image" /></span>
+              <span v-else><img :src="dish.image" alt="Dish Image" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;" /></span>
             </td>
-            <td>
-              <button v-if="editingDish && editingDish.id === dish.id" @click.stop="saveDish(dish)">Save</button>
-              <button v-else @click.stop="editDish(dish)">Edit</button>
-              <button @click.stop="deleteDish(dish.id)">Delete</button>
+            <td v-if="isAdmin">
+              <button v-if="editingDish && editingDish.id === dish.id" @click.stop="saveDish(dish)" class="btn btn-warning btn-sm">Save</button>
+              <button v-else @click.stop="editDish(dish)" class="btn btn-secondary btn-sm">Edit</button>
+              <button @click.stop="deleteDish(dish.id)" class="btn btn-danger btn-sm">Delete</button>
+            </td>
+            <td v-if="!isAdmin">
+              <div class="mb-3">
+                <label for="review" class="form-label">Your Review</label>
+                <textarea v-model="dish.reviewText" class="form-control" rows="3" placeholder="Write your review here..."></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="rating" class="form-label">Rate (1-6)</label>
+                <input 
+                  type="number" 
+                  v-model="dish.rating" 
+                  min="1" max="6" 
+                  class="form-control"
+                  placeholder="Rate from 1 to 6"
+                />
+              </div>
+              <button @click.stop="saveReview(dish)" class="btn btn-primary btn-sm">Save Review</button>
             </td>
           </tr>
         </tbody>
@@ -105,7 +133,6 @@ import { useAuthStore } from "../stores/authStore";
 import { getMainAPI } from "../stores/plugins/axios";
 import Swal from 'sweetalert2';
 
-
 export default {
   name: "Dishes",
   setup() {
@@ -122,6 +149,8 @@ export default {
       price: 0,
       image: ""
     });
+
+    
 
     const editingDish = ref(null); // Track the dish being edited
     const imagePreview = ref(null); // Preview the selected image
@@ -212,46 +241,70 @@ export default {
       }
     };
 
+    const saveReview = async (dish) => {
+  try {
+    const reviewPayload = {
+      dishId: dish.id,
+      customerName: authStore.decodedToken.sub,
+      rating:dish.rating, // Assuming you have the user ID from the token
+      reviewText: dish.reviewText,
+    };
+    console.log(reviewPayload);
+    if (!reviewPayload.rating || !reviewPayload.reviewText) {
+      Swal.fire("Please complete both rating and review text.");
+      return;
+    }
+
+    await getMainAPI().post("/Review", reviewPayload);
+    Swal.fire("Review saved successfully.");
+  
+
+  } catch (error) {
+    console.error("Error saving review:", error);
+    Swal.fire("Failed to save review.");
+  }
+};
     const searchDishes = () => {
       if (searchQuery.value.trim() === "") {
         filteredDishes.value = dishes.value;
       } else {
-        filteredDishes.value = dishes.value.filter(dish =>
-          dish.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-          dish.description.toLowerCase().includes(searchQuery.value.toLowerCase())
+        filteredDishes.value = dishes.value.filter(dish => 
+          dish.name.toLowerCase().includes(searchQuery.value.toLowerCase())
         );
       }
     };
 
-    onMounted(() => {
-      console.log(authStore.decodedToken);
-      isAdmin.value = authStore.user && authStore.role === "Admin";
-      fetchDishes();
-    });
+    onMounted(async () => {
+      await fetchDishes();
+      isAdmin.value = authStore.decodedToken.Roles
+      .split(',')                // [ "FrontEnd", "Admin", "User" ]
+      .map(r => r.trim())      
+      .includes('Admin');      });
 
     return {
       dishes,
       filteredDishes,
-      isAdmin,
       searchQuery,
-      searchDishes,
       showAddForm,
       newDish,
+      editingDish,
+      imagePreview,
+      isAdmin,
+      fetchDishes,
       addDish,
       deleteDish,
       editDish,
       saveDish,
-      editingDish,
-      imagePreview,
-      onImageChange
+      onImageChange,
+      saveReview,
+      searchDishes,
     };
-  }
+  },
 };
 </script>
+
 <style scoped>
-.menu-item-image, .image-preview {
-  width: 100px;  /* Set a fixed width */
-  height: 100px; /* Set a fixed height */
-  object-fit: cover; /* Ensures the image is resized and cropped proportionally */
+.admin-add {
+  margin-bottom: 20px;
 }
 </style>

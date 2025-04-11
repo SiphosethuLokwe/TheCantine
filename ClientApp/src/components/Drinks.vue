@@ -85,8 +85,9 @@
             </td>
             <td>
               <button v-if="editingDrink && editingDrink.id === Drink.id" @click.stop="saveDrink(Drink)">Save</button>
-              <button v-else @click.stop="editDrink(Drink)">Edit</button>
-              <button @click.stop="deleteDrink(Drink.id)">Delete</button>
+              <button v-else @click.stop="editDrink(Drink)" class ="btn btn-warning">Edit</button>
+              <button @click.stop="deleteDrink(Drink.id)"  class ="btn btn-danger">Delete</button>
+              <button @click.stop="deleteDrink(Drink.id)"  class ="btn btn-info">View Ratings</button>
             </td>
           </tr>
         </tbody>

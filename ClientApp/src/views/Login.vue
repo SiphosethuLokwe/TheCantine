@@ -1,5 +1,5 @@
 <template>
-  <div class="min-vh-100 d-flex justify-content-center align-items-center bg-light" style="background-image: url('https://images.unsplash.com/photo-1556740738-b6a63e27c4df'); background-size: cover; background-position: center;">
+  <div class="min-vh-100 d-flex justify-content-center align-items-center bg-light" style="background-size: cover; background-position: center;">
     <div class="card p-4 shadow" style="min-width: 350px; max-width: 400px; background-color: rgba(255, 255, 255, 0.95);">
       <h2 class="text-center mb-4">Login</h2>
       <form @submit.prevent="handleLogin">
@@ -33,6 +33,8 @@
 
 <script>
 import { useAuthStore } from '../stores/authStore'; 
+import Swal from 'sweetalert2';
+
 
 export default {
   name: 'Login',
@@ -52,10 +54,9 @@ export default {
         this.$router.push('/dashboard'); 
       } catch (error) {
         console.error(error.message);
-        alert('Login Failed: ' + error.message);
+        Swal.fire('Login Failed: ' + error.message);
       }
       console.log('Logging in with:', this.form)
-      alert('Login submitted!')
     }
   }
 }

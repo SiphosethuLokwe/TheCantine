@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TheCantine.Infrastructure.Data;
-using System.Reflection;
 using Cantina.Domain.Interfaces;
 using Cantina.Domain;
 using Cantina.Infrastructure.Repositories;
+using Microsoft.Extensions.Logging;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,11 @@ builder.Host.UseSerilog();
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddDbContext<CantinaContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqliteOptions => sqliteOptions.MigrationsAssembly("Cantina.Infrastructure"))
+    
+);
 builder.Services.AddScoped<CantinaContext>(); 
 
 
@@ -96,6 +101,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddScoped<IDishRepository, DishRepository>();
 builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+
 //builder.Services.AddMediatR(typeof(CreateDishCommandHandler).Assembly);
 builder.Services.AddMediatR(typeof(Cantina.Application.Application.Commands.CreateDishCommand).Assembly);
 builder.Services.AddMediatR(typeof(Cantina.Application.Queries.Dishes.Handlers.GetDishesQueryHandler).Assembly);
@@ -120,7 +127,11 @@ builder.Services.Configure<IpRateLimitOptions>(options =>
 });
 builder.Services.AddInMemoryRateLimiting();
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
-
+var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "DB");
+if (!Directory.Exists(dbPath))
+{
+    Directory.CreateDirectory(dbPath);
+}
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
