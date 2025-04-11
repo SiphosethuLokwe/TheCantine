@@ -1,9 +1,11 @@
-﻿using MediatR;
+﻿using Cantina.Application.Commands.Drinks;
+using Cantina.Application.DTO;
+using Cantina.Domain.Entities;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TheCantine.Commands.Drinks;
-using TheCantine.Commands.Drinks.Commands;
-using TheCantine.Models;
 using TheCantine.Queries.Drinks;
+
 
 namespace TheCantine.Controllers
 {
@@ -19,6 +21,7 @@ namespace TheCantine.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "FrontEnd,Admin")]
         public async Task<ActionResult<IEnumerable<Drink>>> GetDrinks()
         {
             var query = new GetDrinksQuery();
@@ -27,42 +30,133 @@ namespace TheCantine.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "FrontEnd")]
         public async Task<ActionResult<Drink>> GetDrink(int id)
         {
-            var query = new GetDrinkByIdQuery { Id = id };
-            var drink = await _mediator.Send(query);
-            if (drink == null)
-            {
-                return NotFound();
+            try
+            { // also update with a response and handle error in it handler/ also there is a cleaner way to write to build these problem child responses 
+                if (id <= 0)
+                {
+                    return BadRequest(new ProblemDetails
+                    {
+                        Title = "BadRequest",
+                        Status = StatusCodes.Status400BadRequest,
+                        Detail = "Invalid Id"
+                    });
+                }
+                var query = new GetDrinkByIdQuery { Id = id };
+                var drink = await _mediator.Send(query);
+                if (drink == null)
+                {
+                    return NotFound(new ProblemDetails
+                    {
+                        Title = "Not found",
+                        Status = StatusCodes.Status404NotFound,
+                        Detail = "Drink was not found"
+                    });
+                }
+                return Ok(drink);
             }
-            return Ok(drink);
+            catch (Exception ex)
+            {
+                // Log later
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpPost]
-        public async Task<ActionResult<Drink>> PostDrink(CreateDrinkCommand command)
+        [Authorize(Policy = "Admin")]
+        public async Task<ActionResult<CommandResponse<Drink>>> PostDrink(CreateDrinkCommand command)
         {
-            var drink = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetDrink), new { id = drink.Id }, drink);
+            if (string.IsNullOrEmpty(command.Name))
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Title = "BadRequest",
+                    Status = StatusCodes.Status400BadRequest,
+                    Detail = "Name of drink must be provided"
+                });
+            }
+            if (command.Price <= 0)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Title = "BadRequest",
+                    Status = StatusCodes.Status400BadRequest,
+                    Detail = "Price must be greater than 0"
+                });
+            }
+            try
+            {
+
+                var drink = await _mediator.Send(command);
+                return Ok(drink);
+            }
+            catch (Exception ex)
+            {
+                // Log later
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDrink(int id, UpdateDrinkCommand command)
+        [Authorize(Policy = "Admin")]
+        public async Task<ActionResult<CommandResponse<bool>>> PutDrink( UpdateDrinkCommand command)
         {
-            if (id != command.Id)
+            if (command.Id <= 0)
             {
-                return BadRequest();
+                return BadRequest(new ProblemDetails
+                {
+                    Title = "BadRequest",
+                    Status = StatusCodes.Status400BadRequest,
+                    Detail = "Invalid Id"
+                });
             }
-
-            await _mediator.Send(command);
-            return NoContent();
+            if (command.Price <= 0)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Title = "BadRequest",
+                    Status = StatusCodes.Status400BadRequest,
+                    Detail = "Price must be greater than 0"
+                });
+            }
+            try
+            {
+                var isUpdated = await _mediator.Send(command);
+                return Ok(isUpdated);
+            }
+            catch (Exception ex)
+            {
+                // Log later
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDrink(int id)
+        [Authorize(Policy = "Admin")]
+        public async Task<ActionResult<CommandResponse<bool>>> DeleteDrink(int id)
         {
-            var command = new DeleteDrinkCommand { Id = id };
-            await _mediator.Send(command);
-            return NoContent();
+            if (id <= 0)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Title = "BadRequest",
+                    Status = StatusCodes.Status400BadRequest,
+                    Detail = "Invalid Id"
+                });
+            }
+            try
+            {
+                var query = new DeleteDrinkCommand { Id = id };
+                var result = await _mediator.Send(query);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // Log later
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
+	<PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -10,24 +10,63 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Commands\**" />
+    <Compile Remove="DB\**" />
+    <Compile Remove="Interfaces\**" />
+    <Compile Remove="Models\**" />
+    <Compile Remove="Queries\**" />
+    <Compile Remove="Repository\**" />
+    <Compile Remove="Services\**" />
+    <Content Remove="Commands\**" />
+    <Content Remove="DB\**" />
+    <Content Remove="Interfaces\**" />
+    <Content Remove="Models\**" />
+    <Content Remove="Queries\**" />
+    <Content Remove="Repository\**" />
+    <Content Remove="Services\**" />
+    <EmbeddedResource Remove="Commands\**" />
+    <EmbeddedResource Remove="DB\**" />
+    <EmbeddedResource Remove="Interfaces\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="Queries\**" />
+    <EmbeddedResource Remove="Repository\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Commands\**" />
+    <None Remove="DB\**" />
+    <None Remove="Interfaces\**" />
+    <None Remove="Models\**" />
+    <None Remove="Queries\**" />
+    <None Remove="Repository\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\WeatherForecastController.cs" />
+    <Compile Remove="Data\CantinaContext.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
 	  <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+	  <PackageReference Include="MediatR" Version="11.1.0" />
 	  <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.3" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
       <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
       <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />  
-       <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+       <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.0" />
 	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\Dishes\Handlers\" />
-    <Folder Include="Interfaces\" />
-    <Folder Include="Models\" />
-    <Folder Include="Services\" />
-    <Folder Include="Repository\" />
+    <ProjectReference Include="..\Cantina.Application\Cantina.Application.csproj" />
+    <ProjectReference Include="..\Cantina.Domain\Cantina.Domain.csproj" />
+    <ProjectReference Include="..\Cantina.Infrastructure\Cantina.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
