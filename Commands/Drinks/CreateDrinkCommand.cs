@@ -4,7 +4,7 @@ using TheCantine.Models;
 namespace TheCantine.Commands.Drinks
 {
 
-    public class CreateDrinkCommand : IRequest<Drink>
+    public class CreateDrinkCommand : IRequest<CommandResponse<Drink>>
     {
         public string Name { get; set; }
         public string Description { get; set; }

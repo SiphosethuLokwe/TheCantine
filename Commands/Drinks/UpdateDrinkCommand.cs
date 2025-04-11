@@ -1,8 +1,9 @@
 ﻿using MediatR;
+using TheCantine.Models;
 
 namespace TheCantine.Commands.Drinks
 {
-    public class UpdateDrinkCommand : IRequest
+    public class UpdateDrinkCommand : IRequest<CommandResponse<bool>>
     {
         public int? Id { get; set; }
         public string? Name { get; set; }

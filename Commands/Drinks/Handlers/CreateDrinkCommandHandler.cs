@@ -1,10 +1,11 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using TheCantine.Data;
 using TheCantine.Models;
 
 namespace TheCantine.Commands.Drinks.Handlers
 {
-    public class CreateDrinkCommandHandler : IRequestHandler<CreateDrinkCommand, Drink>
+    public class CreateDrinkCommandHandler : IRequestHandler<CreateDrinkCommand, CommandResponse<Drink>>
     {
         private readonly CantinaContext _context;
 
@@ -13,20 +14,53 @@ namespace TheCantine.Commands.Drinks.Handlers
             _context = context;
         }
 
-        public async Task<Drink> Handle(CreateDrinkCommand request, CancellationToken cancellationToken)
+        public async Task<CommandResponse<Drink>> Handle(CreateDrinkCommand request, CancellationToken cancellationToken)
         {
-            var drink = new Drink
+            try
             {
-                Name = request.Name,
-                Description = request.Description,
-                Price = request.Price,
-                Image = request.Image
-            };
+                var existingDrink = await _context.Drinks
+                                    .FirstOrDefaultAsync(d => d.Name == request.Name, cancellationToken);
+                if (existingDrink != null)
+                {
+                    return new CommandResponse<Drink>
+                    {
+                        Success = false,
+                        Message = "Drink already exists."
+                    };
+                }
 
-            _context.Drinks.Add(drink);
-            await _context.SaveChangesAsync(cancellationToken);
+                var Drink = new Drink
+                {
+                    Name = request.Name,
+                    Description = request.Description,
+                    Price = request.Price,
+                    Image = request.Image
+                };
 
-            return drink;
+
+                _context.Drinks.Add(Drink);
+                var result = await _context.SaveChangesAsync(cancellationToken);
+                if (result <= 0)
+                {
+                    return new CommandResponse<Drink>
+                    {
+                        Success = false,
+                        Message = "Could not create Drink"
+                    };
+                }
+                return new CommandResponse<Drink>
+                {
+                    Success = true,
+                    Message = "Drink created successfully",
+                    Data = Drink
+                };
+
+            }
+            catch (Exception ex)
+            {
+                //logging will add later
+                throw;
+            }
         }
     }
 }

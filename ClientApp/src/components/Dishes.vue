@@ -103,6 +103,8 @@
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "../stores/authStore";
 import { getMainAPI } from "../stores/plugins/axios";
+import Swal from 'sweetalert2';
+
 
 export default {
   name: "Dishes",
@@ -131,7 +133,7 @@ export default {
         filteredDishes.value = dishes.value;
       } catch (error) {
         console.log(error);
-        console.error("Error fetching dishes:", error);
+        Swal.error("Error fetching dishes:", error);
       }
     };
 
@@ -142,34 +144,47 @@ export default {
         filteredDishes.value = dishes.value;
         newDish.value = { name: "", description: "", price: 0, image: "" };
         showAddForm.value = false;
-        alert("Dish added successfully!");
+        Swal.fire("Dish added successfully!");
       } catch (error) {
         console.error("Error adding dish:", error);
-        alert("Error adding dish.");
+        Swal.fire("Error adding dish.");
       }
     };
 
     const deleteDish = async (id) => {
-      try {
-        await getMainAPI().delete(`/Dishes/delete/${id}`);
-        dishes.value = dishes.value.filter(dish => dish.id !== id);
-        filteredDishes.value = dishes.value;
-        alert("Dish deleted successfully.");
-      } catch (error) {
-        console.error("Error deleting dish:", error);
-        alert("Failed to delete dish.");
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'You won’t be able to revert this!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+      });
+
+      if (result.isConfirmed) {
+        try {
+          let result =  await getMainAPI().delete(`/Dishes/delete/${id}`);
+          dishes.value = dishes.value.filter(dish => dish.id !== id);
+          filteredDishes.value = dishes.value;
+
+          Swal.fire("Deleted", `${result.Message}!`, "success");
+        } catch (error) {
+          console.error("Error deleting dish:", error);
+          Swal.fire("Error", "Failed to delete dish.", "error");
+        }
       }
     };
 
     const editDish = (dish) => {
-      editingDish.value = { ...dish }; // Make a copy of the dish to edit
-      imagePreview.value = dish.image; // Set the current image for preview
+      editingDish.value = { ...dish }; 
+      imagePreview.value = dish.image; 
     };
 
     const saveDish = async () => {
       try {
         if (imagePreview.value) {
-          editingDish.value.image = imagePreview.value; // Update the image in the editingDish
+          editingDish.value.image = imagePreview.value; 
         }
         await getMainAPI().put(`/Dishes/${editingDish.value.id}`, editingDish.value);
         const index = dishes.value.findIndex(d => d.id === editingDish.value.id);
@@ -177,12 +192,12 @@ export default {
           dishes.value[index] = editingDish.value;
           filteredDishes.value = [...dishes.value];
         }
-        editingDish.value = null; // Reset editing state
-        imagePreview.value = null; // Reset image preview
-        alert("Dish updated successfully.");
+        editingDish.value = null; 
+        imagePreview.value = null; 
+        Swal.fire("Dish updated successfully.");
       } catch (error) {
         console.error("Error updating dish:", error);
-        alert("Failed to update dish.");
+        Swal.fire("Failed to update dish.");
       }
     };
 

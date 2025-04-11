@@ -24,6 +24,8 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<CantinaContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<CantinaContext>(); 
+
 
 builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IDrinkService, DrinkService>();

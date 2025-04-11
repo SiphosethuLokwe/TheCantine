@@ -112,7 +112,7 @@ namespace TheCantine.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult<CommandResponse<bool>>> PutDish(int id, UpdateDishCommand command)
+        public async Task<ActionResult<CommandResponse<bool>>> PutDish(UpdateDishCommand command)
         {
             if (command.Id <= 0)
             {
@@ -160,7 +160,7 @@ namespace TheCantine.Controllers
             }
             try
             {
-                var query = new GetDishByIdQuery { Id = id };
+                var query = new DeleteDishCommand { Id = id };
                 var dish = await _mediator.Send(query);
                 return Ok(dish);
             }
