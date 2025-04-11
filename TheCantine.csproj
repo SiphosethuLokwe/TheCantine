@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -10,8 +10,45 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Commands\**" />
+    <Compile Remove="DB\**" />
+    <Compile Remove="Interfaces\**" />
+    <Compile Remove="Models\**" />
+    <Compile Remove="Queries\**" />
+    <Compile Remove="Repository\**" />
+    <Compile Remove="Services\**" />
+    <Content Remove="Commands\**" />
+    <Content Remove="DB\**" />
+    <Content Remove="Interfaces\**" />
+    <Content Remove="Models\**" />
+    <Content Remove="Queries\**" />
+    <Content Remove="Repository\**" />
+    <Content Remove="Services\**" />
+    <EmbeddedResource Remove="Commands\**" />
+    <EmbeddedResource Remove="DB\**" />
+    <EmbeddedResource Remove="Interfaces\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="Queries\**" />
+    <EmbeddedResource Remove="Repository\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Commands\**" />
+    <None Remove="DB\**" />
+    <None Remove="Interfaces\**" />
+    <None Remove="Models\**" />
+    <None Remove="Queries\**" />
+    <None Remove="Repository\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\WeatherForecastController.cs" />
+    <Compile Remove="Data\CantinaContext.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
 	  <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+	  <PackageReference Include="MediatR" Version="11.1.0" />
 	  <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
@@ -27,10 +64,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="DB\" />
-    <Folder Include="Services\" />
-    <Folder Include="Repository\" />
+    <ProjectReference Include="..\Cantina.Application\Cantina.Application.csproj" />
+    <ProjectReference Include="..\Cantina.Domain\Cantina.Domain.csproj" />
+    <ProjectReference Include="..\Cantina.Infrastructure\Cantina.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

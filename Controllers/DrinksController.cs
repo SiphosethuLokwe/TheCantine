@@ -1,10 +1,11 @@
-﻿using MediatR;
+﻿using Cantina.Application.Commands.Drinks;
+using Cantina.Application.DTO;
+using Cantina.Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TheCantine.Commands.Dishes;
-using TheCantine.Commands.Drinks;
-using TheCantine.Models;
 using TheCantine.Queries.Drinks;
+
 
 namespace TheCantine.Controllers
 {
@@ -148,7 +149,7 @@ namespace TheCantine.Controllers
             }
             try
             {
-                var query = new DeleteDishCommand { Id = id };
+                var query = new DeleteDrinkCommand { Id = id };
                 var result = await _mediator.Send(query);
                 return Ok(result);
             }

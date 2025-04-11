@@ -1,8 +1,11 @@
-﻿using MediatR;
+﻿using Cantina.Application.Application.Commands;
+using Cantina.Application.Commands.Dishes;
+using Cantina.Application.DTO;
+using Cantina.Application.Queries.Dishes;
+using Cantina.Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TheCantine.Commands.Dishes;
-using TheCantine.Models;
 using TheCantine.Queries.Dishes;
 
 namespace TheCantine.Controllers

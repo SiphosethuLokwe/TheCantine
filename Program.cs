@@ -1,13 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using TheCantine.Data;
-using TheCantine.Services;
 using MediatR;
-using TheCantine.Interfaces;
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using TheCantine.Infrastructure.Data;
+using System.Reflection;
+using Cantina.Domain.Interfaces;
+using Cantina.Domain;
+using Cantina.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,8 +29,6 @@ builder.Services.AddDbContext<CantinaContext>(options =>
 builder.Services.AddScoped<CantinaContext>(); 
 
 
-builder.Services.AddScoped<IDishService, DishService>();
-builder.Services.AddScoped<IDrinkService, DrinkService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -94,6 +94,11 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+builder.Services.AddScoped<IDishRepository, DishRepository>();
+builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
+//builder.Services.AddMediatR(typeof(CreateDishCommandHandler).Assembly);
+builder.Services.AddMediatR(typeof(Cantina.Application.Application.Commands.CreateDishCommand).Assembly);
+builder.Services.AddMediatR(typeof(Cantina.Application.Queries.Dishes.Handlers.GetDishesQueryHandler).Assembly);
 
 builder.Services.AddMediatR(typeof(Program).Assembly);
 builder.Services.AddLogging(loggingBuilder =>
