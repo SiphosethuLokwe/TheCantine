@@ -1,42 +1,73 @@
- The Cantine Project Development Documentation
+# TheCantine Project
 
-## Overview
+TheCantine is a web application designed to manage dishes and drinks for a cantina. The application is built using ASP.NET Core and follows the principles of Clean Architecture. It uses CQRS (Command Query Responsibility Segregation) and MediatR for handling commands and queries. The application also integrates with a separate security microservice for authentication and authorization. The frontend of the application is built using Vue 3.
 
-The Cantine is a web application designed to manage dishes and drinks for a cantina. The application is built using ASP.NET Core and follows the principles of Clean Architecture. It uses CQRS (Command Query Responsibility Segregation) and MediatR for handling commands and queries. The application also integrates with a separate security microservice for authentication and authorization. The frontend of the application is built using Vue 3.
+## Table of Contents
+
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [How It Works](#how-it-works)
+- [Setup Instructions](#setup-instructions)
+- [Frontend (Vue 3)](#frontend-vue-3)
+- [Conclusion](#conclusion)
 
 ## Architecture
 
-The Cantine project is structured using Clean Architecture, which ensures a clear separation of concerns and promotes maintainability, testability, and scalability. The project is divided into four main layers:
+TheCantine project is structured using Clean Architecture, which ensures a clear separation of concerns and promotes maintainability, testability, and scalability. The project is divided into four main layers:
 
 1. **Presentation Layer (TheCantine.Api)**: Handles HTTP requests and responses.
 2. **Application Layer (TheCantine.Application)**: Contains the application logic, including commands, queries, and handlers.
 3. **Domain Layer (TheCantine.Domain)**: Contains the core business logic and domain entities.
 4. **Infrastructure Layer (TheCantine.Infrastructure)**: Contains data access and repository implementations.
 
+### Clean Architecture
+
+Clean Architecture ensures that the core business logic and domain entities are independent of external concerns such as data access and presentation. This is achieved by organizing the code into distinct layers with clear responsibilities.
+
+- **Domain Layer**: Contains the core business logic and domain entities.
+- **Application Layer**: Contains the application logic, including use cases, commands, queries, and handlers.
+- **Infrastructure Layer**: Contains the implementation details, such as data access, external services, and repositories.
+- **Presentation Layer**: Contains the user interface, such as API controllers.
+
+### CQRS and MediatR
+
+CQRS (Command Query Responsibility Segregation) is a pattern that separates read and write operations into different models. Commands are used to change the state of the system, while queries are used to retrieve data.
+
+MediatR is a library that facilitates the implementation of CQRS by providing a mediator pattern for handling commands and queries. It decouples the sender and receiver of a request, allowing for more maintainable and testable code.
+
+### Security Microservice
+
+TheCantine application integrates with a separate security microservice for authentication and authorization. The security microservice is responsible for generating and validating JWT tokens, which are used to secure the API endpoints.
+
+### Communication Diagram
+
+Below is a diagram illustrating how the components of TheCantine application communicate with each other and the security microservice:
+
+
 ### Project Structure
 
 src/
-├── TheCantine.Api/                # Presentation Layer
+├── TheCantine/                # Presentation Layer
 │   ├── Controllers/
 │   ├── Program.cs
 │   ├── appsettings.json
 │   └── appsettings.Development.json
-├── TheCantine.Application/        # Application Layer
+├── Cantina.Application/        # Application Layer
 │   ├── Commands/
 │   ├── Queries/
 │   ├── Handlers/
 │   ├── DTO/
 │   └── Services/
-├── TheCantine.Domain/             # Domain Layer
+├── Cantina.Domain/             # Domain Layer
 │   ├── Entities/
 │   ├── ValueObjects/
 │   └── Interfaces/
-├── TheCantine.Infrastructure/     # Infrastructure Layer
+├── Cantina.Infrastructure/     # Infrastructure Layer
 │   ├── Data/
 │   ├── Repositories/
 │   ├── Services/
 │   └── Configurations/
-└── TheCantine.Tests/              # Test Project
+└── Cantina.Tests/              # Test Project
     ├── UnitTests/
     └── IntegrationTests/
 
@@ -409,9 +440,25 @@ public class BearerTokenMiddleware
         await _next(context);
     }
 }
+
 Frontend (Vue 3)
 The frontend of TheCantine application is built using Vue 3. It communicates with the backend API to manage dishes and drinks. The frontend uses Axios to make HTTP requests and handles authentication using JWT tokens.
-Example: Axios Request in Vue 3
+
+
+### Frontend Setup
+
+1. **Navigate to the frontend directory**:
+
+
+2. **Install dependencies**:
+   
+   RUN npm install 
+
+   
+3. **Run the frontend application**:
+   RUN npm run dev
+
+ Example: Axios Request in Vue 3
 import axios from 'axios';
 
 const token = 'your-jwt-token';
