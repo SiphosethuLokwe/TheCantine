@@ -91,7 +91,7 @@ Below is a diagram illustrating how the components of TheCantine application com
 |                   |       |                   |       |                   |
 |  Presentation     |       |  Application      |       |  Domain           |
 |  Layer            |       |  Layer            |       |  Layer            |
-|  (TheCantine.Api) |       |  (TheCantine.App) |       |  (TheCantine.Dom) |
+|  (TheCantine)     |       |  (Cantina.App)    |       |  (Cantina.Dom)    |
 |                   |       |                   |       |                   |
 +--------+----------+       +--------+----------+       +--------+----------+
          |                           |                           |
@@ -101,7 +101,7 @@ Below is a diagram illustrating how the components of TheCantine application com
 |                   |       |                   |       |                   |
 |  Infrastructure   |       |  MediatR          |       |  Entities         |
 |  Layer            |       |  (Commands/       |       |  (Dish, Drink)    |
-|  (TheCantine.Inf) |       |  Queries/Handlers)|       |                   |
+|  (Cantina.Inf)    |       |  Queries/Handlers)|       |                   |
 |                   |       |                   |       |                   |
 +--------+----------+       +--------+----------+       +--------+----------+
          |                           |
