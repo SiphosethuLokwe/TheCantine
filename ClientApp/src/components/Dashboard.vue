@@ -53,6 +53,9 @@ export default {
 
 /* Sidebar stays the same */
 .sidebar {
+  flex: 1;                    /* fill remaining space */
+  height: 100vh;              /* full height */
+  position: fixed;            /* fixed position */
   width: 250px;
   padding: 20px;
   background-color: #4b7bec;

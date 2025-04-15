@@ -8,8 +8,7 @@ using System.Text;
 using TheCantine.Infrastructure.Data;
 using Cantina.Domain.Interfaces;
 using Cantina.Domain;
-using Cantina.Infrastructure.Repositories;
-using Microsoft.Extensions.Logging;
+using Cantina.Application.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +21,10 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 builder.Host.UseSerilog();
+
+
+builder.Services.AddProblemDetails();
+
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -99,11 +102,11 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-builder.Services.AddScoped<IDishRepository, DishRepository>();
-builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
-builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddInfrastructure();
+builder.Services.AddScoped<IDishService, DishService>();
+builder.Services.AddScoped<IDrinkService, DrinkService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
-//builder.Services.AddMediatR(typeof(CreateDishCommandHandler).Assembly);
 builder.Services.AddMediatR(typeof(Cantina.Application.Application.Commands.CreateDishCommand).Assembly);
 builder.Services.AddMediatR(typeof(Cantina.Application.Queries.Dishes.Handlers.GetDishesQueryHandler).Assembly);
 
@@ -145,6 +148,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 app.UseCors("AllowFrontend");
+app.UseExceptionHandler();
+app.UseStatusCodePages();
 
 app.UseHttpsRedirection();
 app.UseMiddleware<BearerTokenMiddleware>(); 

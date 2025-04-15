@@ -48,23 +48,13 @@ namespace TheCantine.Controllers
             { // also update with a response and handle error in it handler/ also there is a cleaner way to write to build these problem child responses 
                 if (id <= 0)
                 {
-                    return BadRequest(new ProblemDetails
-                    {
-                        Title = "BadRequest",
-                        Status = StatusCodes.Status400BadRequest,
-                        Detail = "Invalid Id"
-                    });
+                    return BadRequest("Id is required");               
                 }
                 var query = new GetDishByIdQuery { Id = id };
                 var dish = await _mediator.Send(query);
                 if (dish == null)
                 {
-                    return NotFound(new ProblemDetails
-                    {
-                        Title = "Not found",
-                        Status = StatusCodes.Status404NotFound,
-                        Detail = "Dish was not found"
-                    });
+                    return NotFound("Dish was not found");
                 }
                 return Ok(dish);
             }

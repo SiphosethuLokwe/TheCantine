@@ -31,7 +31,7 @@ namespace TheCantine.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<Review>> GetReview(int? id)
+        public async Task<ActionResult<Review>> GetReview(int id)
         {
             try
             { 
