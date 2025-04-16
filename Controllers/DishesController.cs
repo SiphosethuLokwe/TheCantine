@@ -15,11 +15,12 @@ namespace TheCantine.Controllers
     public class DishesController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private ILogger<DishesController> _logger;
 
-        public DishesController(IMediator mediator)
+        public DishesController(IMediator mediator, ILogger<DishesController> logger)
         {
-            //inject Ilogger
             _mediator = mediator;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -34,7 +35,7 @@ namespace TheCantine.Controllers
             }
             catch (Exception ex)
             {
-                // Log later
+                _logger.LogError(ex.Message, ex);
                 return StatusCode(500, "Internal server error");
             }
             
@@ -45,22 +46,14 @@ namespace TheCantine.Controllers
         public async Task<ActionResult<Dish>> GetDish(int id)
         {
             try
-            { // also update with a response and handle error in it handler/ also there is a cleaner way to write to build these problem child responses 
-                if (id <= 0)
-                {
-                    return BadRequest("Id is required");               
-                }
+            { 
                 var query = new GetDishByIdQuery { Id = id };
-                var dish = await _mediator.Send(query);
-                if (dish == null)
-                {
-                    return NotFound("Dish was not found");
-                }
+                var dish = await _mediator.Send(query);     
                 return Ok(dish);
             }
             catch (Exception ex)
             {
-                // Log later
+                _logger.LogError(ex.Message, ex);
                 return StatusCode(500, "Internal server error");
             }
                 
@@ -70,34 +63,21 @@ namespace TheCantine.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<ActionResult<CommandResponse<Dish>>> PostDish(CreateDishCommand command)
         {
-            //possibly move my validation away from here my controller is getting a bit too much 
-            if (string.IsNullOrEmpty(command.Name))
-            {
-                return BadRequest(new ProblemDetails
-                {
-                    Title = "BadRequest",
-                    Status = StatusCodes.Status400BadRequest,
-                    Detail = "Name of dish must be provided"
-                });
-            }
-            if (command.Price <= 0)
-            {
-                return BadRequest(new ProblemDetails
-                {
-                    Title = "BadRequest",
-                    Status = StatusCodes.Status400BadRequest,
-                    Detail = "Price must be greater than 0"
-                });
-            }
+      
             try
-            {  
-           
+            {    
                 var dish = await _mediator.Send(command);
                 return Ok(dish);
             }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return StatusCode(500, ex.Message);
+
+            }
             catch (Exception ex)
             {
-                // Log later
+                _logger.LogError(ex.Message, ex);
                 return StatusCode(500, "Internal server error");
             }
                 
@@ -107,32 +87,20 @@ namespace TheCantine.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<ActionResult<CommandResponse<bool>>> PutDish(UpdateDishCommand command)
         {
-            if (command.Id <= 0)
-            {
-                return BadRequest(new ProblemDetails
-                {
-                    Title = "BadRequest",
-                    Status = StatusCodes.Status400BadRequest,
-                    Detail = "Invalid Id"
-                });
-            }
-            if (command.Price <= 0)
-            {
-                return BadRequest(new ProblemDetails
-                {
-                    Title = "BadRequest",
-                    Status = StatusCodes.Status400BadRequest,
-                    Detail = "Price must be greater than 0"
-                });
-            }
+          
             try
             {            
                var isUpdated =  await _mediator.Send(command);
                return Ok(isUpdated);
             }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return StatusCode(500, ex.Message);
+            }
             catch (Exception ex)
             {
-                // Log later
+                _logger.LogError(ex.Message, ex);
                 return StatusCode(500, "Internal server error");
             }
               
@@ -142,24 +110,22 @@ namespace TheCantine.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<ActionResult<CommandResponse<bool>>> DeleteDish(int id)
         {
-            if (id <= 0)
-            {
-                return BadRequest(new ProblemDetails
-                {
-                    Title = "BadRequest",
-                    Status = StatusCodes.Status400BadRequest,
-                    Detail = "Invalid Id"
-                });
-            }
+          
             try
             {
                 var query = new DeleteDishCommand { Id = id };
                 var dish = await _mediator.Send(query);
                 return Ok(dish);
             }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return StatusCode(500, ex.Message);
+
+            }
             catch (Exception ex)
             {
-                // Log later
+                _logger.LogError(ex.Message, ex);
                 return StatusCode(500, "Internal server error");
             }
        
