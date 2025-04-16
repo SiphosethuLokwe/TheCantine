@@ -12,6 +12,12 @@ namespace Cantina.Application.Common
 {
     public  class CustomExceptionHandler : IExceptionHandler
     {
+        private readonly ILogger<CustomExceptionHandler> _logger;
+        public CustomExceptionHandler(ILogger<CustomExceptionHandler> logger)
+        {
+            _logger = logger;
+        }
+
         public async ValueTask<bool> TryHandleAsync(
             HttpContext httpContext,
             Exception exception,
@@ -19,12 +25,15 @@ namespace Cantina.Application.Common
         {
             int status = exception switch
             {
-                ArgumentException => StatusCodes.Status400BadRequest,
+                ArgumentNullException => StatusCodes.Status400BadRequest,
                 TimeoutException => StatusCodes.Status408RequestTimeout,
                 InvalidOperationException => StatusCodes.Status500InternalServerError,
                 UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
                 _ => StatusCodes.Status500InternalServerError
             };
+
+            _logger.LogError(exception, "Unhandled exception caught: {Message}", exception.Message); 
+
             httpContext.Response.StatusCode = status;
 
             var problemDetails = new ProblemDetails

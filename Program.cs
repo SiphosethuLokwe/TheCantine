@@ -8,8 +8,9 @@ using System.Text;
 using TheCantine.Infrastructure.Data;
 using Cantina.Application.Services;
 using NLog;
+using Cantina.Application.Common;
 
-var environment = Environment.GetEnvironmentVariable("ASNETCORE_ENVIRONMENT");
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 var isprod = environment.Contains(Environments.Production, StringComparison.InvariantCultureIgnoreCase);
 LogManager.Setup().LoadConfigurationFromFile(isprod? "nlog.config" : "nlog.debug.config");
 var logger = LogManager.GetCurrentClassLogger();
@@ -21,7 +22,7 @@ try
     var builder = WebApplication.CreateBuilder(args);
     builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
     builder.Configuration.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASNETCORE_ENVIRONMENT")}.json", optional: true);
-
+    builder.Services.AddExceptionHandler<CustomExceptionHandler>();
     builder.Services.AddProblemDetails();
 
 

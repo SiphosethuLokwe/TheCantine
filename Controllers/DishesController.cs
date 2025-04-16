@@ -27,35 +27,21 @@ namespace TheCantine.Controllers
         [Authorize(Roles = "FrontEnd,Admin")]
         public async Task<ActionResult<IEnumerable<Dish>>> GetDishes()
         {
-            try
-            {
+           
                 var query = new GetDishesQuery();
                 var dishes = await _mediator.Send(query);
                 return Ok(dishes);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return StatusCode(500, "Internal server error");
-            }
-            
+               
         }
 
         [HttpGet("{id}")]
         [Authorize(Roles = "FrontEnd,Admin")]
         public async Task<ActionResult<Dish>> GetDish(int id)
         {
-            try
-            { 
+            
                 var query = new GetDishByIdQuery { Id = id };
                 var dish = await _mediator.Send(query);     
                 return Ok(dish);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return StatusCode(500, "Internal server error");
-            }
                 
         }
 
@@ -63,72 +49,28 @@ namespace TheCantine.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<ActionResult<CommandResponse<Dish>>> PostDish(CreateDishCommand command)
         {
-      
-            try
-            {    
+               
                 var dish = await _mediator.Send(command);
-                return Ok(dish);
-            }
-            catch (ArgumentNullException ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return StatusCode(500, ex.Message);
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return StatusCode(500, "Internal server error");
-            }
-                
+                return Ok(dish);  
         }
 
         [HttpPut("{id}")]
         [Authorize(Policy = "Admin")]
         public async Task<ActionResult<CommandResponse<bool>>> PutDish(UpdateDishCommand command)
-        {
-          
-            try
-            {            
+        {       
+                   
                var isUpdated =  await _mediator.Send(command);
-               return Ok(isUpdated);
-            }
-            catch (ArgumentNullException ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return StatusCode(500, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return StatusCode(500, "Internal server error");
-            }
-              
+               return Ok(isUpdated);                  
         }
 
         [HttpDelete("delete/{id}")]
         [Authorize(Policy = "Admin")]
         public async Task<ActionResult<CommandResponse<bool>>> DeleteDish(int id)
         {
-          
-            try
-            {
+                  
                 var query = new DeleteDishCommand { Id = id };
                 var dish = await _mediator.Send(query);
                 return Ok(dish);
-            }
-            catch (ArgumentNullException ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return StatusCode(500, ex.Message);
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return StatusCode(500, "Internal server error");
-            }
-       
         }
     }
 }
