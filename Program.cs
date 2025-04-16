@@ -51,7 +51,7 @@ try
         .AddJwtBearer(options =>
         {
             options.Authority = builder.Configuration["Jwt:Authority"];
-            options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
                 ValidateAudience = true,
