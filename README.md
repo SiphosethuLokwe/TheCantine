@@ -1,6 +1,6 @@
-# TheCantine Project
+# CantinaAPI Project
 
-TheCantine is a web application designed to manage dishes and drinks for a cantina. The application is built using ASP.NET Core and follows the principles of Clean Architecture. It uses CQRS (Command Query Responsibility Segregation) and MediatR for handling commands and queries. The application also integrates with a separate security microservice for authentication and authorization. The frontend of the application is built using Vue 3.
+CantinaAPI is a web application designed to manage dishes and drinks for a cantina. The application is built using ASP.NET Core and follows the principles of Clean Architecture. It uses CQRS (Command Query Responsibility Segregation) and MediatR for handling commands and queries. The application also integrates with a separate security microservice for authentication and authorization. The frontend of the application is built using Vue 3.
 
 ## Table of Contents
 
@@ -13,12 +13,12 @@ TheCantine is a web application designed to manage dishes and drinks for a canti
 
 ## Architecture
 
-TheCantine project is structured using Clean Architecture, which ensures a clear separation of concerns and promotes maintainability, testability, and scalability. The project is divided into four main layers:
+CantinaAPI project is structured using Clean Architecture, which ensures a clear separation of concerns and promotes maintainability, testability, and scalability. The project is divided into four main layers:
 
-1. **Presentation Layer (TheCantine.Api)**: Handles HTTP requests and responses.
-2. **Application Layer (TheCantine.Application)**: Contains the application logic, including commands, queries, and handlers.
-3. **Domain Layer (TheCantine.Domain)**: Contains the core business logic and domain entities.
-4. **Infrastructure Layer (TheCantine.Infrastructure)**: Contains data access and repository implementations.
+1. **Presentation Layer (CantinaAPI.Api)**: Handles HTTP requests and responses.
+2. **Application Layer (CantinaAPI.Application)**: Contains the application logic, including commands, queries, and handlers.
+3. **Domain Layer (CantinaAPI.Domain)**: Contains the core business logic and domain entities.
+4. **Infrastructure Layer (CantinaAPI.Infrastructure)**: Contains data access and repository implementations.
 
 ### Clean Architecture
 
@@ -37,17 +37,17 @@ MediatR is a library that facilitates the implementation of CQRS by providing a 
 
 ### Security Microservice
 
-TheCantine application integrates with a separate security microservice for authentication and authorization. The security microservice is responsible for generating and validating JWT tokens, which are used to secure the API endpoints.
+CantinaAPI application integrates with a separate security microservice for authentication and authorization. The security microservice is responsible for generating and validating JWT tokens, which are used to secure the API endpoints.
 
 ### Communication Diagram
 
-Below is a diagram illustrating how the components of TheCantine application communicate with each other and the security microservice:
+Below is a diagram illustrating how the components of CantinaAPI application communicate with each other and the security microservice:
 
 
 ### Project Structure
 
 src/
-├── TheCantine/                # Presentation Layer
+├── CantinaAPI/                # Presentation Layer
 │   ├── Controllers/
 │   ├── Program.cs
 │   ├── appsettings.json
@@ -82,16 +82,16 @@ CQRS and MediatR
 CQRS (Command Query Responsibility Segregation) is a pattern that separates read and write operations into different models. Commands are used to change the state of the system, while queries are used to retrieve data.
 MediatR is a library that facilitates the implementation of CQRS by providing a mediator pattern for handling commands and queries. It decouples the sender and receiver of a request, allowing for more maintainable and testable code.
 Security Microservice
-TheCantine application integrates with a separate security microservice for authentication and authorization. The security microservice is responsible for generating and validating JWT tokens, which are used to secure the API endpoints.
+CantinaAPI application integrates with a separate security microservice for authentication and authorization. The security microservice is responsible for generating and validating JWT tokens, which are used to secure the API endpoints.
 
 Communication Diagram
-Below is a diagram illustrating how the components of TheCantine application communicate with each other and the security microservice:
+Below is a diagram illustrating how the components of CantinaAPI application communicate with each other and the security microservice:
 
 +-------------------+       +-------------------+       +-------------------+
 |                   |       |                   |       |                   |
 |  Presentation     |       |  Application      |       |  Domain           |
 |  Layer            |       |  Layer            |       |  Layer            |
-|  (TheCantine)     |       |  (Cantina.App)    |       |  (Cantina.Dom)    |
+|  (CantinaAPI)     |       |  (Cantina.App)    |       |  (Cantina.Dom)    |
 |                   |       |                   |       |                   |
 +--------+----------+       +--------+----------+       +--------+----------+
          |                           |                           |
@@ -116,7 +116,7 @@ Below is a diagram illustrating how the components of TheCantine application com
 +-------------------+       +-------------------+
 
 
-Presentation Layer (TheCantine.Api)
+Presentation Layer (CantinaAPI.Api)
 The presentation layer handles HTTP requests and responses. It contains API controllers that interact with the application layer using MediatR.
 Example: DishesController.cs
 
@@ -124,12 +124,12 @@ Example: DishesController.cs
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TheCantine.Application.Commands.Dishes;
-using TheCantine.Application.DTO;
-using TheCantine.Application.Queries.Dishes;
-using TheCantine.Domain.Entities;
+using CantinaAPI.Application.Commands.Dishes;
+using CantinaAPI.Application.DTO;
+using CantinaAPI.Application.Queries.Dishes;
+using CantinaAPI.Domain.Entities;
 
-namespace TheCantine.Api.Controllers
+namespace CantinaAPI.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -290,14 +290,14 @@ namespace TheCantine.Api.Controllers
     }
 }
 
-Application Layer (TheCantine.Application)
+Application Layer (CantinaAPI.Application)
 The application layer contains the application logic, including commands, queries, and handlers. It uses MediatR to handle commands and queries.
 Example: CreateDishCommand.cs
 using MediatR;
 
-using TheCantine.Domain.Entities;
+using CantinaAPI.Domain.Entities;
 
-namespace TheCantine.Application.Commands.Dishes
+namespace CantinaAPI.Application.Commands.Dishes
 {
     public class CreateDishCommand : IRequest<CommandResponse<Dish>>
     {
@@ -309,10 +309,10 @@ namespace TheCantine.Application.Commands.Dishes
 }
 Example: CreateDishCommandHandler.cs
 using MediatR;
-using TheCantine.Domain.Entities;
-using TheCantine.Domain.Interfaces;
+using CantinaAPI.Domain.Entities;
+using CantinaAPI.Domain.Interfaces;
 
-namespace TheCantine.Application.Handlers
+namespace CantinaAPI.Application.Handlers
 {
     public class CreateDishCommandHandler : IRequestHandler<CreateDishCommand, CommandResponse<Dish>>
     {
@@ -344,7 +344,7 @@ The domain layer contains the core business logic and domain entities.
 Example: Dish.cs
 using System.ComponentModel.DataAnnotations;
 
-namespace TheCantine.Domain.Entities
+namespace CantinaAPI.Domain.Entities
 {
     public class Dish
     {
@@ -361,14 +361,14 @@ namespace TheCantine.Domain.Entities
         public string Image { get; set; }
     }
 }
-Infrastructure Layer (TheCantine.Infrastructure)
+Infrastructure Layer (CantinaAPI.Infrastructure)
 The infrastructure layer contains data access and repository implementations.
 Example: DishRepository.cs
 using Microsoft.EntityFrameworkCore;
-using TheCantine.Domain.Entities;
-using TheCantine.Domain.Interfaces;
+using CantinaAPI.Domain.Entities;
+using CantinaAPI.Domain.Interfaces;
 
-namespace TheCantine.Infrastructure.Repositories
+namespace CantinaAPI.Infrastructure.Repositories
 {
     public class DishRepository : IDishRepository
     {
@@ -414,7 +414,7 @@ namespace TheCantine.Infrastructure.Repositories
 }
 
 Security Microservice
-The security microservice is responsible for generating and validating JWT tokens. TheCantine application uses these tokens to secure its API endpoints.
+The security microservice is responsible for generating and validating JWT tokens. CantinaAPI application uses these tokens to secure its API endpoints.
 Example: BearerTokenMiddleware.cs
 
 public class BearerTokenMiddleware
@@ -442,7 +442,7 @@ public class BearerTokenMiddleware
 }
 
 Frontend (Vue 3)
-The frontend of TheCantine application is built using Vue 3. It communicates with the backend API to manage dishes and drinks. The frontend uses Axios to make HTTP requests and handles authentication using JWT tokens.
+The frontend of CantinaAPI application is built using Vue 3. It communicates with the backend API to manage dishes and drinks. The frontend uses Axios to make HTTP requests and handles authentication using JWT tokens.
 
 
 ### Frontend Setup

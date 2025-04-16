@@ -5,7 +5,7 @@ using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using TheCantine.Infrastructure.Data;
+using CantinaAPI.Infrastructure.Data;
 using Cantina.Application.Services;
 using NLog;
 using Cantina.Application.Common;

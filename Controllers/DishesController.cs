@@ -6,9 +6,9 @@ using Cantina.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TheCantine.Queries.Dishes;
+using CantinaAPI.Queries.Dishes;
 
-namespace TheCantine.Controllers
+namespace CantinaAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
