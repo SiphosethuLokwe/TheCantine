@@ -2,6 +2,7 @@
 using Cantina.Domain.Entities;
 using Cantina.Domain.Interfaces;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 
 namespace CantinaAPI.Queries.Drinks.Handlers
@@ -9,22 +10,18 @@ namespace CantinaAPI.Queries.Drinks.Handlers
     public class GetDrinksQueryHandler : IRequestHandler<GetDrinksQuery, IEnumerable<Drink>>
     {
         private readonly IDrinkService _drinkService;
+        private readonly ILogger<GetDrinksQueryHandler> _logger;
 
-        public GetDrinksQueryHandler(IDrinkService drinkService)
+        public GetDrinksQueryHandler(IDrinkService drinkService, ILogger<GetDrinksQueryHandler> logger)
         {
             _drinkService = drinkService;
+            _logger = logger;
         }
         public async Task<IEnumerable<Drink>> Handle(GetDrinksQuery request, CancellationToken cancellationToken)
         {
-            try
-            {
-                return await _drinkService.GetAllAsync(cancellationToken);
-
-            }
-            catch (Exception ex)
-            {
-                throw; 
-            }
+            _logger.LogInformation("Getting Drinks......");
+            return await _drinkService.GetAllAsync(cancellationToken);
+       
         }
     }
 }

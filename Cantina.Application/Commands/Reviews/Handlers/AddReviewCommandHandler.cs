@@ -15,8 +15,7 @@ namespace Cantina.Application.Commands.Reviews.Handlers
         }
         public async Task<Review> Handle(AddReviewCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
+           
                 var review = new Review
                 {
                     DishId = request.DishId,
@@ -27,13 +26,7 @@ namespace Cantina.Application.Commands.Reviews.Handlers
                 };
 
                 await _reviewService.CreateAsync(review, cancellationToken);
-                return review;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-           
+                return review; 
         }
     }
 }

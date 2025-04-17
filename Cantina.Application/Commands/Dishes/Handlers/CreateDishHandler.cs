@@ -21,12 +21,14 @@ namespace Cantina.Application.Commands.Dishes.Handlers
 
         public async Task<CommandResponse<Dish>> Handle(CreateDishCommand request, CancellationToken cancellationToken)
         {
+
                if (string.IsNullOrEmpty(request.Name))
                 throw new ArgumentNullException("Dish name is required");
                 if (string.IsNullOrEmpty(request.Description))
                     throw new ArgumentNullException("Description is required");
+                
                 if (request.Price <= 0)
-                    throw new ArgumentNullException("Price must be greater than 0");
+                    throw new ArgumentOutOfRangeException("Price must be greater than 0");
 
 
                 var existingDrink = await _dishService.GetByNameAsync(request.Name, cancellationToken);

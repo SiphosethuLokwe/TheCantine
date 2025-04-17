@@ -18,7 +18,7 @@ public class DishService : IDishService
         }
         catch (Exception ex)
         {
-            // You could log here
+           
             throw new ApplicationException("An error occurred while retrieving dishes.", ex);
         }
     }

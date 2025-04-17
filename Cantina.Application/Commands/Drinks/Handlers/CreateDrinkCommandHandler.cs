@@ -3,7 +3,9 @@ using Cantina.Application.Commands.Drinks;
 using Cantina.Application.DTO;
 using Cantina.Domain;
 using Cantina.Domain.Entities;
+using CantinaAPI.Commands.Drinks.Handlers;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 
 namespace Cantina.Application.Commands.drinkes.Handlers
@@ -12,9 +14,12 @@ namespace Cantina.Application.Commands.drinkes.Handlers
     {
         private readonly IDrinkService _drinkService;
 
-        public CreatedrinkHandler(IDrinkService drinkService)
+        private readonly ILogger<CreatedrinkHandler> _logger;
+
+        public CreatedrinkHandler(IDrinkService drinkhService, ILogger<CreatedrinkHandler> logger)
         {
-            _drinkService = drinkService;
+            _drinkService = drinkhService;
+            _logger = logger;
         }
         public async Task<CommandResponse<Drink>> Handle(CreateDrinkCommand request, CancellationToken cancellationToken)
         {
@@ -26,7 +31,7 @@ namespace Cantina.Application.Commands.drinkes.Handlers
                 throw new ArgumentNullException("name must be provided");
 
             if (request.Price <= 0) 
-                throw new ArgumentNullException("Please provide price");
+                throw new ArgumentOutOfRangeException("Please provide price");
 
             var existingDrink = await _drinkService.GetByNameAsync(request.Name, cancellationToken);
                 if (existingDrink != null)

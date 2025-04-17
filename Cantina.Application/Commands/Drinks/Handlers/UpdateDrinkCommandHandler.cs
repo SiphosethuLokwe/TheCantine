@@ -1,8 +1,10 @@
-﻿using Cantina.Application.Commands.Drinks;
+﻿using Cantina.Application.Commands.Dishes.Handlers;
+using Cantina.Application.Commands.Drinks;
 using Cantina.Application.DTO;
 using Cantina.Domain;
 using Cantina.Domain.Interfaces;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 
 namespace CantinaAPI.Commands.Drinks.Handlers
@@ -11,15 +13,19 @@ namespace CantinaAPI.Commands.Drinks.Handlers
     {
         private readonly IDrinkService _drinkService;
 
-        public UpdateDrinkHandler(IDrinkService drinkService)
+        private readonly ILogger<UpdateDrinkHandler> _logger;
+
+        public UpdateDrinkHandler(IDrinkService drinkhService, ILogger<UpdateDrinkHandler> logger)
         {
-            _drinkService = drinkService;
+            _drinkService = drinkhService;
+            _logger = logger;
         }
 
         public async Task<CommandResponse<bool>> Handle(UpdateDrinkCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
+            if (request.Id <= 0)
+                throw new ArgumentNullException("Id was not provided");
+
                 var Drink = await _drinkService.GetByIdAsync(request.Id, cancellationToken);
                 if (Drink == null)
                 {
@@ -41,12 +47,8 @@ namespace CantinaAPI.Commands.Drinks.Handlers
                     Success = true,
                     Message = "Drink updated successfully."
                 };
-            }
-            catch (Exception ex)
-            {
-                // Log the exception
-                throw;
-            }
+            
+         
         }
     }
 }

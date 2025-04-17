@@ -20,16 +20,13 @@ namespace CantinaAPI.Queries.Drinks.Handlers
         }
         public async Task<Drink> Handle(GetDrinkByIdQuery request, CancellationToken cancellationToken)
         {
-           try
-            {
+
+            if (request.Id <= 0)
+                throw new ArgumentOutOfRangeException(nameof(request.Id), "No Id was provided");            
               return await _drinkService.GetByIdAsync(request.Id, cancellationToken);
 
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                throw;
-            }
+            
+           
         }
     }
 }

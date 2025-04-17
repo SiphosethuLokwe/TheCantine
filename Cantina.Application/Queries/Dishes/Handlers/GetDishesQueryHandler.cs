@@ -18,7 +18,7 @@ namespace Cantina.Application.Queries.Dishes.Handlers
         public async Task<IEnumerable<Dish>> Handle(GetDishesQuery request, CancellationToken cancellationToken)
         {
                   
-          return await _dishService.GetAllAsync(cancellationToken);   
+           return await _dishService.GetAllAsync(cancellationToken);   
            
         }
     }

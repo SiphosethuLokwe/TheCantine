@@ -19,7 +19,7 @@ namespace Cantina.Application.Commands.Dishes.Handlers
         public async Task<CommandResponse<bool>> Handle(UpdateDishCommand request, CancellationToken cancellationToken)
         {
 
-            if (request.Price <= 0) // we can even decimal try parse here but for now this is fine
+            if (request.Price <= 0) 
                 throw new ArgumentNullException("Price must be greater than 0");
             if (request.Id <= 0)
                 throw new ArgumentNullException("Id not set");
