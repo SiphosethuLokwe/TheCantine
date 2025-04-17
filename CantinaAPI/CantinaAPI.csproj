@@ -67,8 +67,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cantina.Application\Cantina.Application.csproj" />
-    <ProjectReference Include="..\Cantina.Domain\Cantina.Domain.csproj" />
     <ProjectReference Include="..\Cantina.Infrastructure\Cantina.Infrastructure.csproj" />
   </ItemGroup>
-
+<PropertyGroup>
+  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+</PropertyGroup>
 </Project>

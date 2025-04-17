@@ -5,10 +5,11 @@ using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using CantinaAPI.Infrastructure.Data;
+using Cantina.Infrastructure.Data;
 using Cantina.Application.Services;
 using NLog;
 using Cantina.Application.Common;
+using CantinaAPI.Infrastructure.Data;
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 var isprod = environment.Contains(Environments.Production, StringComparison.InvariantCultureIgnoreCase);
