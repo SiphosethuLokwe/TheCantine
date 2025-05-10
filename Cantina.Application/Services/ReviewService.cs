@@ -14,38 +14,21 @@ namespace Cantina.Application.Services
 
         public async Task<IEnumerable<Review>> GetAllAsync(CancellationToken cancellationToken)
         {
-            try
-            {
-                return await _reviewRepository.GetAllAsync(cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                throw new ApplicationException("An error occurred while retrieving reviews.", ex);
-            }
+           
+            return await _reviewRepository.GetAllAsync(cancellationToken);
+                        
         }
 
         public async Task<Review?> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
-            try
-            {
-                return await _reviewRepository.GetByIdAsync(id, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                throw new ApplicationException($"Failed to retrieve review with ID {id}.", ex);
-            }
+            
+            return await _reviewRepository.GetByIdAsync(id, cancellationToken);
+                       
         }
 
         public async Task CreateAsync(Review review, CancellationToken cancellationToken)
-        {
-            try
-            {
-                await _reviewRepository.AddAsync(review, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                throw new ApplicationException("Failed to create review.", ex);
-            }
+        {           
+            await _reviewRepository.AddAsync(review, cancellationToken);                      
         }
 
         public async Task<IEnumerable<Review>> GetByTypeIdAsync(int? dishId, int? drinkId, CancellationToken cancellationToken)

@@ -12,74 +12,39 @@ public class DishService : IDishService
 
     public async Task<IEnumerable<Dish>> GetAllAsync(CancellationToken cancellationToken)
     {
-        try
-        {
-            return await _dishRepository.GetAllAsync(cancellationToken);
-        }
-        catch (Exception ex)
-        {
-           
-            throw new ApplicationException("An error occurred while retrieving dishes.", ex);
-        }
+        
+       return await _dishRepository.GetAllAsync(cancellationToken);    
+       
     }
 
     public async Task<Dish?> GetByIdAsync(int id, CancellationToken cancellationToken)
-    {
-        try
-        {
-            return await _dishRepository.GetByIdAsync(id, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            throw new ApplicationException($"Error getting dish with ID {id}.", ex);
-        }
+    {       
+        return await _dishRepository.GetByIdAsync(id, cancellationToken);        
     }
 
     public async Task CreateAsync(Dish dish, CancellationToken cancellationToken)
     {
-        try
-        {
-            await _dishRepository.AddAsync(dish, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            throw new ApplicationException("Failed to create dish.", ex);
-        }
+       
+      await _dishRepository.AddAsync(dish, cancellationToken);
+            
     }
 
     public async Task UpdateAsync(Dish dish, CancellationToken cancellationToken)
     {
-        try
-        {
-            await _dishRepository.UpdateAsync(dish, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            throw new ApplicationException("Failed to update dish.", ex);
-        }
+       
+        await _dishRepository.UpdateAsync(dish, cancellationToken);
+           
     }
 
     public async Task DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        try
-        {
-            await _dishRepository.DeleteAsync(id, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            throw new ApplicationException($"Failed to delete dish with ID {id}.", ex);
-        }
+       
+       await _dishRepository.DeleteAsync(id, cancellationToken);
+      
     }
 
     public async Task<Dish?> GetByNameAsync(string name, CancellationToken cancellationToken)
-    {
-        try
-        {
-            return await _dishRepository.GetFirstOrDefaultAsync(d => d.Name == name, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            throw new ApplicationException($"Error retrieving dish by name '{name}'.", ex);
-        }
+    {      
+        return await _dishRepository.GetFirstOrDefaultAsync(d => d.Name == name, cancellationToken);             
     }
 }

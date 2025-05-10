@@ -23,9 +23,7 @@ namespace CantinaAPI.Queries.Drinks.Handlers
 
             if (request.Id <= 0)
                 throw new ArgumentOutOfRangeException(nameof(request.Id), "No Id was provided");            
-              return await _drinkService.GetByIdAsync(request.Id, cancellationToken);
-
-            
+              return await _drinkService.GetByIdAsync(request.Id, cancellationToken);           
            
         }
     }
