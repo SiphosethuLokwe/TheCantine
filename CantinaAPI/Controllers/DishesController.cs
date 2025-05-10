@@ -30,7 +30,7 @@ namespace CantinaAPI.Controllers
         public async Task<ActionResult<IEnumerable<Dish>>> GetDishes([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
            
-                var query = new GetDishesQuery();
+                var query = new GetDishesQuery {Page = page, PageSize = pageSize };
                 var dishes = await _mediator.Send(query);
                 return Ok(dishes);
                
