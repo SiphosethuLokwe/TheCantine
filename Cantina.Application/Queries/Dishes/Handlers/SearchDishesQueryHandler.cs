@@ -23,7 +23,7 @@ namespace Cantina.Application.Queries.Dishes.Handlers
             {
                 throw new ArgumentNullException("Search term cannot be empty.");
             }
-            return await _dishService.SearchAsync(request.SearchTerm,request.Page,request.PageSize cancellationToken);
+            return await _dishService.SearchAsync(request.SearchTerm,request.Page,request.PageSize, cancellationToken);
         }
     }
 

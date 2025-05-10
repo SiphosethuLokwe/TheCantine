@@ -22,9 +22,9 @@ namespace CantinaAPI.Controllers
 
         [HttpGet]
         [Authorize(Roles = "FrontEnd,Admin")]
-        public async Task<ActionResult<IEnumerable<Review>>> GetReviews()
+        public async Task<ActionResult<IEnumerable<Review>>> GetReviews([FromQuery] int page, [FromQuery] int pageSize)
         {
-            var query = new GetReviewList();
+            var query = new GetReviewList { Page = page, PageSize = pageSize };
             var Reviews = await _mediator.Send(query);
             return Ok(Reviews);
         }

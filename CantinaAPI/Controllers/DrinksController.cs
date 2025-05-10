@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CantinaAPI.Queries.Drinks;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 
 namespace CantinaAPI.Controllers
@@ -22,9 +23,9 @@ namespace CantinaAPI.Controllers
 
         [HttpGet]
         [Authorize(Roles = "FrontEnd,Admin")]
-        public async Task<ActionResult<IEnumerable<Drink>>> GetDrinks()
+        public async Task<ActionResult<IEnumerable<Drink>>> GetDrinks([FromQuery] int page, [FromQuery] int pageSize)
         {
-            var query = new GetDrinksQuery();
+            var query = new GetDrinksQuery { Page = page, PageSize = pageSize };
             var drinks = await _mediator.Send(query);
             return Ok(drinks);
         }

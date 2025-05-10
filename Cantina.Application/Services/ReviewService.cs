@@ -12,10 +12,10 @@ namespace Cantina.Application.Services
             _reviewRepository = reviewRepository;
         }
 
-        public async Task<IEnumerable<Review>> GetAllAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<Review>> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken)
         {
-           
-            return await _reviewRepository.GetAllAsync(cancellationToken);
+            int skip = (page - 1) * pageSize;
+            return await _reviewRepository.GetAllAsync(skip, pageSize, cancellationToken);
                         
         }
 

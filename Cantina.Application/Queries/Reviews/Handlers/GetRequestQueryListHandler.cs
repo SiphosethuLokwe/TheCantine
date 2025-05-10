@@ -19,7 +19,7 @@ namespace Cantina.Application.Queries.Reviews.Handlers
         public async Task<IEnumerable<Review>> Handle(GetReviewList request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Getting reviews....");
-           return await _reviewRepository.GetAllAsync(cancellationToken);
+           return await _reviewRepository.GetAllAsync(request.Page, request.PageSize, cancellationToken);
         
         }
     }

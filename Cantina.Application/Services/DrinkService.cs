@@ -10,9 +10,10 @@ public class DrinkService : IDrinkService
         _drinkRepository = drinkRepository;
     }
 
-    public async Task<IEnumerable<Drink>> GetAllAsync(CancellationToken cancellationToken)
-    {      
-        return await _drinkRepository.GetAllAsync(cancellationToken);       
+    public async Task<IEnumerable<Drink>> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken)
+    {
+        int skip = (page - 1) * pageSize;
+        return await _drinkRepository.GetAllAsync(skip, pageSize, cancellationToken);       
     }
 
     public async Task<Drink?> GetByIdAsync(int id, CancellationToken cancellationToken)

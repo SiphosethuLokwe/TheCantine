@@ -25,12 +25,12 @@ try
     builder.Services.AddExceptionHandler<CustomExceptionHandler>();
     builder.Services.AddProblemDetails();
     builder.Services.AddResponseCaching();
+    builder.Services.AddResponseCompression(options =>
+    {
+        options.EnableForHttps = true;
+    });
 
-
-    Console.WriteLine("JWT Key: " + builder.Configuration["Jwt:Key"]);
-
-    // Add services to the container.
-    
+    // Add services to the container.   
     builder.Services.AddControllers();
     builder.Services.AddDbContext<CantinaContext>(options =>
         options.UseSqlite(
@@ -153,6 +153,8 @@ try
     app.UseCors("AllowFrontend");
     app.UseExceptionHandler();
     app.UseStatusCodePages();
+    app.UseResponseCaching();
+    app.UseResponseCompression();
 
     app.UseHttpsRedirection();
     app.UseMiddleware<BearerTokenMiddleware>();

@@ -20,7 +20,7 @@ namespace CantinaAPI.Queries.Drinks.Handlers
         public async Task<IEnumerable<Drink>> Handle(GetDrinksQuery request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Getting Drinks......");
-            return await _drinkService.GetAllAsync(cancellationToken);
+            return await _drinkService.GetAllAsync(request.Page, request.PageSize,cancellationToken);
        
         }
     }
