@@ -1,0 +1,31 @@
+﻿version: '3.8'
+
+services:
+  cantinaapi:
+    build:
+      context: .
+      dockerfile: CantinaAPI/Dockerfile
+    ports:
+      - "5000:5000" 
+      - "5001:5001" 
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production" 
+      Jwt__Key: "Y9vXr3!pQeZt7KfB6LmW2#dNvUjSaTcHxG4oPbRu" 
+    volumes:
+      - ./data:/app/data 
+    depends_on:
+      - db
+
+  db:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    container_name: cantina-db
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YourStrongPassword123!" # Replace with a secure password
+    ports:
+      - "1433:1433" # Expose SQL Server port
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+volumes:
+  mssql_data:
