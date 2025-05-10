@@ -11,10 +11,16 @@ public class DishService : IDishService
     }
 
     public async Task<IEnumerable<Dish>> GetAllAsync(CancellationToken cancellationToken)
+    {        
+       return await _dishRepository.GetAllAsync(cancellationToken);          
+    }
+
+    public async Task<IEnumerable<Dish>> SearchAsync(string searchTerm, CancellationToken cancellationToken)
     {
-        
-       return await _dishRepository.GetAllAsync(cancellationToken);    
-       
+        return await _dishRepository.GetAllAsync(
+            d => d.Name.Contains(searchTerm) || d.Description.Contains(searchTerm),
+            cancellationToken
+        );
     }
 
     public async Task<Dish?> GetByIdAsync(int id, CancellationToken cancellationToken)
@@ -23,28 +29,25 @@ public class DishService : IDishService
     }
 
     public async Task CreateAsync(Dish dish, CancellationToken cancellationToken)
-    {
-       
-      await _dishRepository.AddAsync(dish, cancellationToken);
-            
+    {       
+      await _dishRepository.AddAsync(dish, cancellationToken);            
     }
 
     public async Task UpdateAsync(Dish dish, CancellationToken cancellationToken)
-    {
-       
-        await _dishRepository.UpdateAsync(dish, cancellationToken);
-           
+    {     
+        await _dishRepository.UpdateAsync(dish, cancellationToken);          
     }
 
     public async Task DeleteAsync(int id, CancellationToken cancellationToken)
-    {
-       
-       await _dishRepository.DeleteAsync(id, cancellationToken);
-      
+    {     
+       await _dishRepository.DeleteAsync(id, cancellationToken);     
     }
 
     public async Task<Dish?> GetByNameAsync(string name, CancellationToken cancellationToken)
     {      
         return await _dishRepository.GetFirstOrDefaultAsync(d => d.Name == name, cancellationToken);             
     }
+
+ 
+
 }

@@ -72,5 +72,15 @@ namespace CantinaAPI.Controllers
                 var dish = await _mediator.Send(query);
                 return Ok(dish);
         }
+
+        [HttpGet("search")]
+        [Authorize(Roles = "FrontEnd,Admin")]
+        public async Task<ActionResult<IEnumerable<Dish>>> SearchDishes([FromQuery] string searchTerm)
+        {         
+            var query = new SearchDishesQuery { SearchTerm = searchTerm };
+            var dishes = await _mediator.Send(query);
+            return Ok(dishes);
+        }
+
     }
 }

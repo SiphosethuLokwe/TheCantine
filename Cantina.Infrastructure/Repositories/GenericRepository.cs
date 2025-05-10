@@ -37,6 +37,19 @@ namespace Cantina.Infrastructure.Data.Repositories
             }
         }
 
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return await _dbSet.Where(predicate).ToListAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating {Entity}", typeof(T).Name);
+                throw;
+            }
+        }
+
         public async Task<T> GetByIdAsync(object id, CancellationToken cancellationToken)
         {
             try
