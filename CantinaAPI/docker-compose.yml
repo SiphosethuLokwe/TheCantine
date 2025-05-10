@@ -21,9 +21,9 @@ services:
     container_name: cantina-db
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: "Pass@word1!" # Replace with a secure password
+      SA_PASSWORD: "Pass@word1!" 
     ports:
-      - "1433:1433" # Expose SQL Server port
+      - "1433:1433" 
     volumes:
       - mssql_data:/var/opt/mssql
 
