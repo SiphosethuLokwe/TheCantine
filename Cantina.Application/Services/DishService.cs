@@ -10,15 +10,19 @@ public class DishService : IDishService
         _dishRepository = dishRepository;
     }
 
-    public async Task<IEnumerable<Dish>> GetAllAsync(CancellationToken cancellationToken)
-    {        
-       return await _dishRepository.GetAllAsync(cancellationToken);          
+    public async Task<IEnumerable<Dish>> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken)
+    {
+        int skip = (page - 1) * pageSize; 
+        return await _dishRepository.GetAllAsync(skip, pageSize, cancellationToken);
     }
 
-    public async Task<IEnumerable<Dish>> SearchAsync(string searchTerm, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Dish>> SearchAsync(string searchTerm,int page, int pageSize, CancellationToken cancellationToken)
     {
+        int skip = (page - 1) * pageSize; 
         return await _dishRepository.GetAllAsync(
-            d => d.Name.Contains(searchTerm) || d.Description.Contains(searchTerm),
+            d => d.Name.Contains(searchTerm) || d.Description.Contains(searchTerm), 
+            skip,
+            pageSize,
             cancellationToken
         );
     }

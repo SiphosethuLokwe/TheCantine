@@ -12,6 +12,7 @@ namespace CantinaAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+
     public class DishesController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -25,7 +26,8 @@ namespace CantinaAPI.Controllers
 
         [HttpGet]
         [Authorize(Roles = "FrontEnd,Admin")]
-        public async Task<ActionResult<IEnumerable<Dish>>> GetDishes()
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
+        public async Task<ActionResult<IEnumerable<Dish>>> GetDishes([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
            
                 var query = new GetDishesQuery();
@@ -37,12 +39,10 @@ namespace CantinaAPI.Controllers
         [HttpGet("{id}")]
         [Authorize(Roles = "FrontEnd,Admin")]
         public async Task<ActionResult<Dish>> GetDish(int id)
-        {
-            
+        {           
                 var query = new GetDishByIdQuery { Id = id };
                 var dish = await _mediator.Send(query);     
-                return Ok(dish);
-                
+                return Ok(dish);                
         }
 
         [HttpPost]
@@ -57,8 +57,7 @@ namespace CantinaAPI.Controllers
         [HttpPut("{id}")]
         [Authorize(Policy = "Admin")]
         public async Task<ActionResult<CommandResponse<bool>>> PutDish(UpdateDishCommand command)
-        {       
-                   
+        {                        
                var isUpdated =  await _mediator.Send(command);
                return Ok(isUpdated);                  
         }
@@ -66,8 +65,7 @@ namespace CantinaAPI.Controllers
         [HttpDelete("delete/{id}")]
         [Authorize(Policy = "Admin")]
         public async Task<ActionResult<CommandResponse<bool>>> DeleteDish(int id)
-        {
-                  
+        {               
                 var query = new DeleteDishCommand { Id = id };
                 var dish = await _mediator.Send(query);
                 return Ok(dish);
@@ -75,9 +73,10 @@ namespace CantinaAPI.Controllers
 
         [HttpGet("search")]
         [Authorize(Roles = "FrontEnd,Admin")]
-        public async Task<ActionResult<IEnumerable<Dish>>> SearchDishes([FromQuery] string searchTerm)
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
+        public async Task<ActionResult<IEnumerable<Dish>>> SearchDishes([FromQuery] string searchTerm, [FromQuery] int page , [FromQuery] int pageSize)
         {         
-            var query = new SearchDishesQuery { SearchTerm = searchTerm };
+            var query = new SearchDishesQuery { SearchTerm = searchTerm, Page = page, PageSize = pageSize };
             var dishes = await _mediator.Send(query);
             return Ok(dishes);
         }

@@ -24,6 +24,8 @@ try
     builder.Configuration.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASNETCORE_ENVIRONMENT")}.json", optional: true);
     builder.Services.AddExceptionHandler<CustomExceptionHandler>();
     builder.Services.AddProblemDetails();
+    builder.Services.AddResponseCaching();
+
 
     Console.WriteLine("JWT Key: " + builder.Configuration["Jwt:Key"]);
 

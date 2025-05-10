@@ -24,11 +24,14 @@ namespace Cantina.Infrastructure.Data.Repositories
             _dbSet = _context.Set<T>();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<T>> GetAllAsync(int skip, int take, CancellationToken cancellationToken)
         {
             try
             {
-                return await _dbSet.ToListAsync(cancellationToken);
+                return await _dbSet
+                    .Skip(skip) 
+                    .Take(take) 
+                    .ToListAsync(cancellationToken);
             }
             catch (Exception ex)
             {
@@ -37,11 +40,15 @@ namespace Cantina.Infrastructure.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate, int skip, int take, CancellationToken cancellationToken)
         {
             try
             {
-                return await _dbSet.Where(predicate).ToListAsync(cancellationToken);
+                return await _dbSet
+                           .Where(predicate) // Apply the filter
+                           .Skip(skip)       // Skip the specified number of items
+                           .Take(take)       // Take the specified number of items
+                           .ToListAsync(cancellationToken);
             }
             catch (Exception ex)
             {
