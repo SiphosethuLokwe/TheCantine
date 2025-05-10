@@ -10,7 +10,7 @@ services:
       - "8081:8081" 
     environment:
       ASPNETCORE_ENVIRONMENT: "Production" 
-      Jwt__Key: "Y9vXr3!pQeZt7KfB6LmW2#dNvUjSaTcHxG4oPbRu" 
+      Jwt__Key: "Y9vXr3!pQeZt7KfB6LmW2#dNvUjSaTcHxG4oPbRu," 
     volumes:
       - ./data:/app/data 
     depends_on:
