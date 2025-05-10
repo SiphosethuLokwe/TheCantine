@@ -22,7 +22,5 @@ namespace Cantina.Domain.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public Dish Dish { get; set; }
-        public Drink Drink { get; set; }
     }
 }

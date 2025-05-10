@@ -1,15 +1,14 @@
-using Microsoft.EntityFrameworkCore;
-using Serilog;
-using MediatR;
 using AspNetCoreRateLimit;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Cantina.Infrastructure.Data;
-using Cantina.Application.Services;
-using NLog;
 using Cantina.Application.Common;
+using Cantina.Application.Services;
 using CantinaAPI.Infrastructure.Data;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using NLog;
+using Serilog;
+using System.Text;
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 var isprod = environment.Contains(Environments.Production, StringComparison.InvariantCultureIgnoreCase);
@@ -26,8 +25,10 @@ try
     builder.Services.AddExceptionHandler<CustomExceptionHandler>();
     builder.Services.AddProblemDetails();
 
+    Console.WriteLine("JWT Key: " + builder.Configuration["Jwt:Key"]);
 
     // Add services to the container.
+    
     builder.Services.AddControllers();
     builder.Services.AddDbContext<CantinaContext>(options =>
         options.UseSqlite(
@@ -135,6 +136,7 @@ try
     builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
   
     var app = builder.Build();
+ 
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
